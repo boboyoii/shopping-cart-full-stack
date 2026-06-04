@@ -49,7 +49,7 @@
 
 - [x] vite + typescript + react 환경 구축
 - [x] emotion 환경 구축
-- [ ] 보일러 플레이트 제거
+- [x] 보일러 플레이트 제거
 
 ### UI 컴포넌트
 
