@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { getCartItems, type CartItemResponse } from './apis/cart';
 import CartItem from './CartItem';
 import CheckBox from './common/CheckBox';
+import NoticeIcon from './Icons/NoticeIcon';
 
 const CartItemListPage = () => {
   const [cartItems, setCartItems] = useState<CartItemResponse[]>([]);
@@ -22,6 +23,15 @@ const CartItemListPage = () => {
 
   const isAllSelected =
     cartItems.length > 0 && selectedProductIds.length === cartItems.length;
+
+  const orderAmount = cartItems.reduce((total, { product, quantity }) => {
+    if (selectedProductIds.includes(product.id)) {
+      return total + product.price * quantity;
+    }
+    return total;
+  }, 0);
+  const shippingFee = orderAmount >= 100000 ? 0 : 3000;
+  const totalPaymentAmount = orderAmount + shippingFee;
 
   const toggleItemSelection = (productId: number) => {
     setSelectedProductIds((prevSelectedIds) =>
@@ -63,6 +73,29 @@ const CartItemListPage = () => {
           />
         </ItemWrapper>
       ))}
+
+      <PageDescription>
+        <NoticeIcon />총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.
+      </PageDescription>
+
+      <SummaryDivider />
+
+      <SummaryRow>
+        <SummaryLabel>주문 금액</SummaryLabel>
+        <SummaryValue>{orderAmount.toLocaleString()}원</SummaryValue>
+      </SummaryRow>
+
+      <SummaryRow>
+        <SummaryLabel>배송비</SummaryLabel>
+        <SummaryValue>{shippingFee.toLocaleString()}원</SummaryValue>
+      </SummaryRow>
+
+      <SummaryDivider />
+
+      <SummaryRow>
+        <SummaryLabel>총 결제 금액</SummaryLabel>
+        <SummaryValue>{totalPaymentAmount.toLocaleString()}원</SummaryValue>
+      </SummaryRow>
     </PageLayout>
   );
 };
@@ -81,6 +114,10 @@ const PageTitle = styled.h2`
 `;
 
 const PageDescription = styled.p`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
   font-weight: 500;
   font-size: 0.75rem;
   margin: 0.5rem 0;
@@ -103,6 +140,31 @@ const RemoveButton = styled.button`
   border-radius: 0.25rem;
   background-color: #ffffff;
   font-size: 0.625rem;
+`;
+
+const SummaryRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.75rem 0 0;
+`;
+
+const SummaryLabel = styled.span`
+  font-weight: 700;
+  font-size: 1rem;
+`;
+
+const SummaryValue = styled.strong`
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 1.5rem;
+`;
+
+const SummaryDivider = styled.hr`
+  height: 1px;
+  margin: 0.75rem 0;
+  border: 0;
+  background-color: #0000001a;
 `;
 
 export default CartItemListPage;
