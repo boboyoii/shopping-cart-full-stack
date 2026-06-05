@@ -39,6 +39,7 @@ const CartItemListPage = () => {
 
   const isAllSelected =
     cartItems.length > 0 && selectedProductIds.length === cartItems.length;
+  const isCartEmpty = cartItems.length === 0;
 
   const orderAmount = cartItems.reduce((total, { product, quantity }) => {
     if (selectedProductIds.includes(product.id)) {
@@ -65,58 +66,65 @@ const CartItemListPage = () => {
   return (
     <PageLayout headerContent={<Logo>SHOP</Logo>}>
       <PageTitle>장바구니</PageTitle>
-      <PageDescription>
-        현재 {cartItems.length}종류의 상품이 담겨있습니다.
-      </PageDescription>
 
-      <CheckBox checked={isAllSelected} onToggle={toggleAllItemSelection} />
+      {isCartEmpty ? (
+        <EmptyCartMessage>장바구니에 담은 상품이 없습니다.</EmptyCartMessage>
+      ) : (
+        <>
+          <PageDescription>
+            현재 {cartItems.length}종류의 상품이 담겨있습니다.
+          </PageDescription>
 
-      {cartItems.map(({ product, quantity }) => (
-        <ItemWrapper key={product.id}>
-          <ItemHeader>
-            <CheckBox
-              checked={selectedProductIds.includes(product.id)}
-              onToggle={() => toggleItemSelection(product.id)}
-            />
-            <RemoveButton
-              type="button"
-              onClick={() => removeCartItem(product.id)}
-            >
-              삭제
-            </RemoveButton>
-          </ItemHeader>
+          <CheckBox checked={isAllSelected} onToggle={toggleAllItemSelection} />
 
-          <CartItem
-            name={product.name}
-            thumbnail={product.thumbnail}
-            price={product.price}
-            quantity={quantity}
-          />
-        </ItemWrapper>
-      ))}
+          {cartItems.map(({ product, quantity }) => (
+            <ItemWrapper key={product.id}>
+              <ItemHeader>
+                <CheckBox
+                  checked={selectedProductIds.includes(product.id)}
+                  onToggle={() => toggleItemSelection(product.id)}
+                />
+                <RemoveButton
+                  type="button"
+                  onClick={() => removeCartItem(product.id)}
+                >
+                  삭제
+                </RemoveButton>
+              </ItemHeader>
 
-      <PageDescription>
-        <NoticeIcon />총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.
-      </PageDescription>
+              <CartItem
+                name={product.name}
+                thumbnail={product.thumbnail}
+                price={product.price}
+                quantity={quantity}
+              />
+            </ItemWrapper>
+          ))}
 
-      <SummaryDivider />
+          <PageDescription>
+            <NoticeIcon />총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.
+          </PageDescription>
 
-      <SummaryRow>
-        <SummaryLabel>주문 금액</SummaryLabel>
-        <SummaryValue>{orderAmount.toLocaleString()}원</SummaryValue>
-      </SummaryRow>
+          <SummaryDivider />
 
-      <SummaryRow>
-        <SummaryLabel>배송비</SummaryLabel>
-        <SummaryValue>{shippingFee.toLocaleString()}원</SummaryValue>
-      </SummaryRow>
+          <SummaryRow>
+            <SummaryLabel>주문 금액</SummaryLabel>
+            <SummaryValue>{orderAmount.toLocaleString()}원</SummaryValue>
+          </SummaryRow>
 
-      <SummaryDivider />
+          <SummaryRow>
+            <SummaryLabel>배송비</SummaryLabel>
+            <SummaryValue>{shippingFee.toLocaleString()}원</SummaryValue>
+          </SummaryRow>
 
-      <SummaryRow>
-        <SummaryLabel>총 결제 금액</SummaryLabel>
-        <SummaryValue>{totalPaymentAmount.toLocaleString()}원</SummaryValue>
-      </SummaryRow>
+          <SummaryDivider />
+
+          <SummaryRow>
+            <SummaryLabel>총 결제 금액</SummaryLabel>
+            <SummaryValue>{totalPaymentAmount.toLocaleString()}원</SummaryValue>
+          </SummaryRow>
+        </>
+      )}
     </PageLayout>
   );
 };
@@ -142,6 +150,17 @@ const PageDescription = styled.p`
   font-weight: 500;
   font-size: 0.75rem;
   margin: 0.5rem 0;
+`;
+
+const EmptyCartMessage = styled.p`
+  min-height: 30rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+  font-weight: 400;
+  font-size: 1rem;
 `;
 
 const ItemWrapper = styled.article`
