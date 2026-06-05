@@ -1,5 +1,7 @@
+import CartItemListPage from './CartItemListPage';
+
 function App() {
-  return null;
+  return <CartItemListPage />;
 }
 
 export default App;
