@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 import PageLayout from './PageLayout';
 import { useEffect, useState } from 'react';
-import { getCartItems, type CartItem } from './apis/cart';
+import { getCartItems, type CartItemResponse } from './apis/cart';
+import CartItem from './CartItem';
 
 const CartItemListPage = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItemResponse[]>([]);
 
   useEffect(() => {
     const loadCartItems = async () => {
@@ -22,6 +23,16 @@ const CartItemListPage = () => {
       <PageDescription>
         현재 {cartItems.length}종류의 상품이 담겨있습니다.
       </PageDescription>
+
+      {cartItems.map(({ product, quantity }) => (
+        <CartItem
+          key={product.id}
+          name={product.name}
+          thumbnail={product.thumbnail}
+          price={product.price}
+          quantity={quantity}
+        />
+      ))}
     </PageLayout>
   );
 };
