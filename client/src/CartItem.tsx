@@ -1,17 +1,27 @@
 import styled from '@emotion/styled';
+import CheckBox from './common/CheckBox';
 
 interface CartItemProps {
   name: string;
   thumbnail: string;
   price: number;
   quantity: number;
+  isSelected: boolean;
+  onToggleSelect: () => void;
 }
 
-const CartItem = ({ name, thumbnail, price, quantity }: CartItemProps) => {
+const CartItem = ({
+  name,
+  thumbnail,
+  price,
+  quantity,
+  isSelected,
+  onToggleSelect,
+}: CartItemProps) => {
   return (
     <ItemWrapper>
       <ItemHeader>
-        <SelectCheckbox type="checkbox" aria-label={`${name} 선택`} />
+        <CheckBox checked={isSelected} onToggle={onToggleSelect} />
         <RemoveButton type="button">삭제</RemoveButton>
       </ItemHeader>
 
@@ -42,15 +52,6 @@ const ItemHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
-
-const SelectCheckbox = styled.input`
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 1px solid #0000001a;
-  border-radius: 0.5rem;
-  margin: 0;
-  accent-color: #000000;
 `;
 
 const RemoveButton = styled.button`

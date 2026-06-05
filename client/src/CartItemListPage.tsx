@@ -1,21 +1,31 @@
 import styled from '@emotion/styled';
-import PageLayout from './PageLayout';
+import PageLayout from './common/PageLayout';
 import { useEffect, useState } from 'react';
 import { getCartItems, type CartItemResponse } from './apis/cart';
 import CartItem from './CartItem';
 
 const CartItemListPage = () => {
   const [cartItems, setCartItems] = useState<CartItemResponse[]>([]);
+  const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
 
   useEffect(() => {
     const loadCartItems = async () => {
       const items = await getCartItems();
 
       setCartItems(items);
+      setSelectedProductIds(items.map((item) => item.product.id));
     };
 
     loadCartItems();
   }, []);
+
+  const toggleProductSelection = (productId: number) => {
+    setSelectedProductIds((prevSelectedIds) =>
+      prevSelectedIds.includes(productId)
+        ? prevSelectedIds.filter((id) => id !== productId)
+        : [...prevSelectedIds, productId],
+    );
+  };
 
   return (
     <PageLayout headerContent={<Logo>SHOP</Logo>}>
@@ -31,6 +41,8 @@ const CartItemListPage = () => {
           thumbnail={product.thumbnail}
           price={product.price}
           quantity={quantity}
+          isSelected={selectedProductIds.includes(product.id)}
+          onToggleSelect={() => toggleProductSelection(product.id)}
         />
       ))}
     </PageLayout>
