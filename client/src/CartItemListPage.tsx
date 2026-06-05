@@ -1,7 +1,11 @@
 import styled from '@emotion/styled';
 import PageLayout from './common/PageLayout';
 import { useEffect, useState } from 'react';
-import { getCartItems, type CartItemResponse } from './apis/cart';
+import {
+  deleteCartItems,
+  getCartItems,
+  type CartItemResponse,
+} from './apis/cart';
 import CartItem from './CartItem';
 import CheckBox from './common/CheckBox';
 import NoticeIcon from './Icons/NoticeIcon';
@@ -20,6 +24,18 @@ const CartItemListPage = () => {
 
     loadCartItems();
   }, []);
+
+  const removeCartItem = async (productId: number) => {
+    await deleteCartItems(productId);
+
+    setCartItems((prevCartItems) =>
+      prevCartItems.filter(({ product }) => product.id !== productId),
+    );
+
+    setSelectedProductIds((prevSelectedIds) =>
+      prevSelectedIds.filter((id) => id !== productId),
+    );
+  };
 
   const isAllSelected =
     cartItems.length > 0 && selectedProductIds.length === cartItems.length;
@@ -62,7 +78,12 @@ const CartItemListPage = () => {
               checked={selectedProductIds.includes(product.id)}
               onToggle={() => toggleItemSelection(product.id)}
             />
-            <RemoveButton type="button">삭제</RemoveButton>
+            <RemoveButton
+              type="button"
+              onClick={() => removeCartItem(product.id)}
+            >
+              삭제
+            </RemoveButton>
           </ItemHeader>
 
           <CartItem

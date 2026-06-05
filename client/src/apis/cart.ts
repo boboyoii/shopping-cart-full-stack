@@ -21,3 +21,13 @@ export const getCartItems = async (): Promise<CartItemResponse[]> => {
 
   return data.items;
 };
+
+export const deleteCartItems = async (productId: number): Promise<void> => {
+  const response = await fetch(`/api/cart/items/${productId}/`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    throw new Error('장바구니 상품을 제거하지 못했습니다.');
+  }
+};
