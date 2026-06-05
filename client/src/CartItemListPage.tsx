@@ -46,7 +46,7 @@ const CartItemListPage = () => {
       <CheckBox checked={isAllSelected} onToggle={toggleAllItemSelection} />
 
       {cartItems.map(({ product, quantity }) => (
-        <ItemWrapper>
+        <ItemWrapper key={product.id}>
           <ItemHeader>
             <CheckBox
               checked={selectedProductIds.includes(product.id)}
@@ -56,7 +56,6 @@ const CartItemListPage = () => {
           </ItemHeader>
 
           <CartItem
-            key={product.id}
             name={product.name}
             thumbnail={product.thumbnail}
             price={product.price}
