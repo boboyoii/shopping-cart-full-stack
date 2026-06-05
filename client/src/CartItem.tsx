@@ -1,66 +1,30 @@
 import styled from '@emotion/styled';
-import CheckBox from './common/CheckBox';
 
 interface CartItemProps {
   name: string;
   thumbnail: string;
   price: number;
   quantity: number;
-  isSelected: boolean;
-  onToggleSelect: () => void;
 }
 
-const CartItem = ({
-  name,
-  thumbnail,
-  price,
-  quantity,
-  isSelected,
-  onToggleSelect,
-}: CartItemProps) => {
+const CartItem = ({ name, thumbnail, price, quantity }: CartItemProps) => {
   return (
-    <ItemWrapper>
-      <ItemHeader>
-        <CheckBox checked={isSelected} onToggle={onToggleSelect} />
-        <RemoveButton type="button">삭제</RemoveButton>
-      </ItemHeader>
+    <Content>
+      <Thumbnail src={thumbnail} alt={name} />
 
-      <Content>
-        <Thumbnail src={thumbnail} alt={name} />
+      <ProductInfo>
+        <Name>{name}</Name>
+        <Price>{price.toLocaleString()}원</Price>
 
-        <ProductInfo>
-          <Name>{name}</Name>
-          <Price>{price.toLocaleString()}원</Price>
-
-          <QuantityControl>
-            <QuantityButton type="button">-</QuantityButton>
-            <Quantity>{quantity}</Quantity>
-            <QuantityButton type="button">+</QuantityButton>
-          </QuantityControl>
-        </ProductInfo>
-      </Content>
-    </ItemWrapper>
+        <QuantityControl>
+          <QuantityButton type="button">-</QuantityButton>
+          <Quantity>{quantity}</Quantity>
+          <QuantityButton type="button">+</QuantityButton>
+        </QuantityControl>
+      </ProductInfo>
+    </Content>
   );
 };
-
-const ItemWrapper = styled.article`
-  padding-block: 0.75rem;
-  border-top: 1px solid #0000001a;
-`;
-
-const ItemHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const RemoveButton = styled.button`
-  padding: 0.3rem 0.55rem;
-  border: 1px solid #0000001a;
-  border-radius: 0.25rem;
-  background-color: #ffffff;
-  font-size: 0.625rem;
-`;
 
 const Content = styled.div`
   display: flex;

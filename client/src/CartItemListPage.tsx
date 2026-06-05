@@ -3,6 +3,7 @@ import PageLayout from './common/PageLayout';
 import { useEffect, useState } from 'react';
 import { getCartItems, type CartItemResponse } from './apis/cart';
 import CartItem from './CartItem';
+import CheckBox from './common/CheckBox';
 
 const CartItemListPage = () => {
   const [cartItems, setCartItems] = useState<CartItemResponse[]>([]);
@@ -35,15 +36,23 @@ const CartItemListPage = () => {
       </PageDescription>
 
       {cartItems.map(({ product, quantity }) => (
-        <CartItem
-          key={product.id}
-          name={product.name}
-          thumbnail={product.thumbnail}
-          price={product.price}
-          quantity={quantity}
-          isSelected={selectedProductIds.includes(product.id)}
-          onToggleSelect={() => toggleProductSelection(product.id)}
-        />
+        <ItemWrapper>
+          <ItemHeader>
+            <CheckBox
+              checked={selectedProductIds.includes(product.id)}
+              onToggle={() => toggleProductSelection(product.id)}
+            />
+            <RemoveButton type="button">삭제</RemoveButton>
+          </ItemHeader>
+
+          <CartItem
+            key={product.id}
+            name={product.name}
+            thumbnail={product.thumbnail}
+            price={product.price}
+            quantity={quantity}
+          />
+        </ItemWrapper>
       ))}
     </PageLayout>
   );
@@ -66,6 +75,25 @@ const PageDescription = styled.p`
   font-weight: 500;
   font-size: 0.75rem;
   margin: 0.5rem 0;
+`;
+
+const ItemWrapper = styled.article`
+  padding-block: 0.75rem;
+  border-top: 1px solid #0000001a;
+`;
+
+const ItemHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const RemoveButton = styled.button`
+  padding: 0.3rem 0.55rem;
+  border: 1px solid #0000001a;
+  border-radius: 0.25rem;
+  background-color: #ffffff;
+  font-size: 0.625rem;
 `;
 
 export default CartItemListPage;
