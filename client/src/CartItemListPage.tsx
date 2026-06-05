@@ -20,12 +20,20 @@ const CartItemListPage = () => {
     loadCartItems();
   }, []);
 
-  const toggleProductSelection = (productId: number) => {
+  const isAllSelected =
+    cartItems.length > 0 && selectedProductIds.length === cartItems.length;
+
+  const toggleItemSelection = (productId: number) => {
     setSelectedProductIds((prevSelectedIds) =>
       prevSelectedIds.includes(productId)
         ? prevSelectedIds.filter((id) => id !== productId)
         : [...prevSelectedIds, productId],
     );
+  };
+
+  const toggleAllItemSelection = () => {
+    if (isAllSelected) return setSelectedProductIds([]);
+    setSelectedProductIds(cartItems.map((item) => item.product.id));
   };
 
   return (
@@ -35,12 +43,14 @@ const CartItemListPage = () => {
         현재 {cartItems.length}종류의 상품이 담겨있습니다.
       </PageDescription>
 
+      <CheckBox checked={isAllSelected} onToggle={toggleAllItemSelection} />
+
       {cartItems.map(({ product, quantity }) => (
         <ItemWrapper>
           <ItemHeader>
             <CheckBox
               checked={selectedProductIds.includes(product.id)}
-              onToggle={() => toggleProductSelection(product.id)}
+              onToggle={() => toggleItemSelection(product.id)}
             />
             <RemoveButton type="button">삭제</RemoveButton>
           </ItemHeader>
