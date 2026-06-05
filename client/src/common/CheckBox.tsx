@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import checkedIcon from '../assets/checked.svg';
-import uncheckedIcon from '../assets/unchecked.svg';
+import CheckedIcon from '../Icons/CheckedIcon';
+import UncheckedIcon from '../Icons/UncheckedIcon';
 
 interface CheckBoxProps {
   checked: boolean;
@@ -15,11 +15,7 @@ const CheckBox = ({ checked, onToggle }: CheckBoxProps) => {
       aria-checked={checked}
       onClick={onToggle}
     >
-      <Icon
-        src={checked ? checkedIcon : uncheckedIcon}
-        alt=""
-        aria-hidden="true"
-      />
+      {checked ? <CheckedIcon /> : <UncheckedIcon />}
     </Button>
   );
 };
@@ -31,12 +27,6 @@ const Button = styled.button`
   border: none;
   background: none;
   cursor: pointer;
-`;
-
-const Icon = styled.img`
-  width: 100%;
-  height: 100%;
-  display: block;
 `;
 
 export default CheckBox;
