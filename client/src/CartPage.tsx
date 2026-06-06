@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import PageLayout from './common/PageLayout';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   deleteCartItems,
   getCartItems,
@@ -12,8 +13,10 @@ import Button from './common/Button';
 import CheckBox from './common/CheckBox';
 import Stepper from './common/Stepper';
 import NoticeIcon from './Icons/NoticeIcon';
+import type { OrderItem } from './OrderConfirmPage';
 
 const CartItemListPage = () => {
+  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState<CartItemResponse[]>([]);
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
 
@@ -81,17 +84,36 @@ const CartItemListPage = () => {
     setSelectedProductIds(cartItems.map((item) => item.product.id));
   };
 
+  const moveToOrderConfirmPage = () => {
+    const orderItems: OrderItem[] = cartItems
+      .filter(({ product }) => selectedProductIds.includes(product.id))
+      .map(({ product, quantity }) => ({
+        productId: product.id,
+        name: product.name,
+        thumbnail: product.thumbnail,
+        price: product.price,
+        quantity,
+      }));
+
+    navigate('/order-confirm', {
+      state: {
+        orderItems,
+        shippingFee,
+      },
+    });
+  };
+
   return (
     <PageLayout headerContent={<Logo>SHOP</Logo>}>
-      <PageTitle>장바구니</PageTitle>
+      <Title>장바구니</Title>
 
       {isCartEmpty ? (
         <EmptyCartMessage>장바구니에 담은 상품이 없습니다.</EmptyCartMessage>
       ) : (
         <>
-          <PageDescription>
+          <Description>
             현재 {cartItems.length}종류의 상품이 담겨있습니다.
-          </PageDescription>
+          </Description>
 
           <CheckBox checked={isAllSelected} onToggle={toggleAllItemSelection} />
 
@@ -125,9 +147,9 @@ const CartItemListPage = () => {
             </ItemWrapper>
           ))}
 
-          <PageDescription>
+          <Description>
             <NoticeIcon />총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.
-          </PageDescription>
+          </Description>
 
           <SummaryDivider />
 
@@ -151,7 +173,11 @@ const CartItemListPage = () => {
       )}
 
       <BottomButtonWrapper>
-        <Button fullWidth disabled={selectedProductIds.length === 0}>
+        <Button
+          fullWidth
+          disabled={selectedProductIds.length === 0}
+          onClick={moveToOrderConfirmPage}
+        >
           주문 확인
         </Button>
       </BottomButtonWrapper>
@@ -166,13 +192,13 @@ const Logo = styled.h1`
   color: #ffffff;
 `;
 
-const PageTitle = styled.h2`
+const Title = styled.h2`
   font-weight: 700;
   font-size: 1.5rem;
   margin: 0;
 `;
 
-const PageDescription = styled.p`
+const Description = styled.p`
   display: flex;
   align-items: center;
   gap: 0.25rem;
