@@ -16,7 +16,7 @@ import NoticeIcon from './Icons/NoticeIcon';
 import type { OrderItem } from './OrderConfirmPage';
 import OrderSummaryRow from './OrderSummaryRow';
 
-const CartItemListPage = () => {
+const CartPage = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState<CartItemResponse[]>([]);
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
@@ -59,16 +59,16 @@ const CartItemListPage = () => {
     );
   };
 
-  const isAllSelected =
-    cartItems.length > 0 && selectedProductIds.length === cartItems.length;
   const isCartEmpty = cartItems.length === 0;
+  const isAllSelected =
+    !isCartEmpty && selectedProductIds.length === cartItems.length;
 
-  const orderAmount = cartItems.reduce((total, { product, quantity }) => {
-    if (selectedProductIds.includes(product.id)) {
-      return total + product.price * quantity;
-    }
-    return total;
-  }, 0);
+  const orderAmount = cartItems
+    .filter(({ product }) => selectedProductIds.includes(product.id))
+    .reduce(
+      (total, { product, quantity }) => total + product.price * quantity,
+      0,
+    );
   const shippingFee = orderAmount >= 100000 ? 0 : 3000;
   const totalPaymentAmount = orderAmount + shippingFee;
 
@@ -109,57 +109,66 @@ const CartItemListPage = () => {
       <Title>장바구니</Title>
 
       {isCartEmpty ? (
-        <EmptyCartMessage>장바구니에 담은 상품이 없습니다.</EmptyCartMessage>
+        <EmptyCartState>장바구니에 담은 상품이 없습니다.</EmptyCartState>
       ) : (
         <>
-          <Description>
-            현재 {cartItems.length}종류의 상품이 담겨있습니다.
-          </Description>
+          <CartItemsSection aria-label="장바구니 상품">
+            <ItemCountDescription>
+              현재 {cartItems.length}종류의 상품이 담겨있습니다.
+            </ItemCountDescription>
 
-          <CheckBox checked={isAllSelected} onToggle={toggleAllItemSelection} />
+            <SelectAllControl>
+              <CheckBox
+                checked={isAllSelected}
+                label="전체선택"
+                onToggle={toggleAllItemSelection}
+              />
+            </SelectAllControl>
 
-          {cartItems.map(({ product, quantity }) => (
-            <ItemWrapper key={product.id}>
-              <ItemHeader>
-                <CheckBox
-                  checked={selectedProductIds.includes(product.id)}
-                  onToggle={() => toggleItemSelection(product.id)}
-                />
-                <RemoveButton
-                  type="button"
-                  onClick={() => removeCartItem(product.id)}
+            {cartItems.map(({ product, quantity }) => (
+              <CartItemContainer key={product.id}>
+                <ItemHeader>
+                  <CheckBox
+                    ariaLabel={`${product.name} 선택`}
+                    checked={selectedProductIds.includes(product.id)}
+                    onToggle={() => toggleItemSelection(product.id)}
+                  />
+                  <RemoveButton
+                    type="button"
+                    onClick={() => removeCartItem(product.id)}
+                  >
+                    삭제
+                  </RemoveButton>
+                </ItemHeader>
+
+                <CartItem
+                  name={product.name}
+                  thumbnail={product.thumbnail}
+                  price={product.price}
                 >
-                  삭제
-                </RemoveButton>
-              </ItemHeader>
+                  <Stepper
+                    value={quantity}
+                    onChange={(nextQuantity) =>
+                      updateCartItemQuantity(product.id, nextQuantity)
+                    }
+                  />
+                </CartItem>
+              </CartItemContainer>
+            ))}
 
-              <CartItem
-                name={product.name}
-                thumbnail={product.thumbnail}
-                price={product.price}
-              >
-                <Stepper
-                  value={quantity}
-                  onChange={(nextQuantity) =>
-                    updateCartItemQuantity(product.id, nextQuantity)
-                  }
-                />
-              </CartItem>
-            </ItemWrapper>
-          ))}
+            <ShippingNotice>
+              <NoticeIcon />총 주문 금액이 100,000원 이상일 경우 무료
+              배송됩니다.
+            </ShippingNotice>
+          </CartItemsSection>
 
-          <Description>
-            <NoticeIcon />총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.
-          </Description>
+          <OrderSummarySection aria-label="주문 금액 요약">
+            <OrderSummaryRow label="주문 금액" amount={orderAmount} />
+            <OrderSummaryRow label="배송비" amount={shippingFee} />
 
-          <SummaryDivider />
-
-          <OrderSummaryRow label="주문 금액" amount={orderAmount} />
-          <OrderSummaryRow label="배송비" amount={shippingFee} />
-
-          <SummaryDivider />
-
-          <OrderSummaryRow label="총 결제 금액" amount={totalPaymentAmount} />
+            <SummaryDivider />
+            <OrderSummaryRow label="총 결제 금액" amount={totalPaymentAmount} />
+          </OrderSummarySection>
         </>
       )}
 
@@ -189,17 +198,28 @@ const Title = styled.h2`
   margin: 0;
 `;
 
-const Description = styled.p`
+const CartItemsSection = styled.section``;
+
+const ItemCountDescription = styled.p`
+  margin: 0.5rem 0;
+  font-weight: 500;
+  font-size: 0.75rem;
+`;
+
+const SelectAllControl = styled.div`
+  padding-block: 0.75rem;
+`;
+
+const ShippingNotice = styled.p`
   display: flex;
   align-items: center;
   gap: 0.25rem;
-
+  margin: 0.5rem 0;
   font-weight: 500;
   font-size: 0.75rem;
-  margin: 0.5rem 0;
 `;
 
-const EmptyCartMessage = styled.p`
+const EmptyCartState = styled.p`
   min-height: 30rem;
   display: flex;
   align-items: center;
@@ -210,7 +230,7 @@ const EmptyCartMessage = styled.p`
   font-size: 1rem;
 `;
 
-const ItemWrapper = styled.article`
+const CartItemContainer = styled.div`
   padding-block: 0.75rem;
   border-top: 1px solid #0000001a;
 `;
@@ -227,6 +247,11 @@ const RemoveButton = styled.button`
   border-radius: 0.25rem;
   background-color: #ffffff;
   font-size: 0.625rem;
+`;
+
+const OrderSummarySection = styled.section`
+  margin-top: 0.75rem;
+  border-top: 1px solid #0000001a;
 `;
 
 const SummaryDivider = styled.hr`
@@ -246,4 +271,4 @@ const BottomButtonWrapper = styled.div`
   z-index: 100;
 `;
 
-export default CartItemListPage;
+export default CartPage;
