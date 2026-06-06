@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import CartPage from './CartPage';
-import OrderConfirmPage from './OrderConfirmPage';
+import CartPage from './cart/CartPage';
+import OrderConfirmPage from './order/OrderConfirmPage';
 
 function App() {
   return (

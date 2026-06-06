@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { CartItemResponse } from '../apis/cart';
 
 export const useCartSelection = (cartItems: CartItemResponse[]) => {
-  const [selectedProductIds, setSelectedProductIds] = useState<number[]>(() =>
-    cartItems.map((item) => item.product.id),
-  );
+  const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
+  const hasInitialized = useRef(false);
+
+  useEffect(() => {
+    if (hasInitialized.current || cartItems.length === 0) return;
+
+    setSelectedProductIds(cartItems.map((item) => item.product.id));
+    hasInitialized.current = true;
+  }, [cartItems]);
 
   const isAllSelected =
     cartItems.length > 0 && selectedProductIds.length === cartItems.length;
