@@ -13703,7 +13703,7 @@ function NoticeIcon() {
 }
 //#endregion
 //#region src/cart/apis/cart.ts
-var API_BASE_URL = "";
+var API_BASE_URL = "https://shopping-cart-full-stack-production-673c.up.railway.app";
 var getCartItems = async () => {
 	const response = await fetch(`${API_BASE_URL}/api/cart/`);
 	if (!response.ok) throw new Error("장바구니 상품 목록을 불러오지 못했습니다.");
