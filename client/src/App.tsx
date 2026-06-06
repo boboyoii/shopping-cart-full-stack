@@ -4,7 +4,7 @@ import OrderConfirmPage from './order/OrderConfirmPage';
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/" element={<CartPage />} />
         <Route path="/order-confirm" element={<OrderConfirmPage />} />

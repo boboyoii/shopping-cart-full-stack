@@ -15,8 +15,10 @@ export interface CartItemQuantityResponse {
   quantity: number;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
+
 export const getCartItems = async (): Promise<CartItemResponse[]> => {
-  const response = await fetch('/api/cart/');
+  const response = await fetch(`${API_BASE_URL}/api/cart/`);
 
   if (!response.ok) {
     throw new Error('장바구니 상품 목록을 불러오지 못했습니다.');
@@ -28,7 +30,7 @@ export const getCartItems = async (): Promise<CartItemResponse[]> => {
 };
 
 export const deleteCartItems = async (productId: number): Promise<void> => {
-  const response = await fetch(`/api/cart/items/${productId}/`, {
+  const response = await fetch(`${API_BASE_URL}/api/cart/items/${productId}/`, {
     method: 'DELETE',
   });
 
@@ -41,7 +43,7 @@ export const patchCartItemQuantity = async (
   productId: number,
   quantity: number,
 ): Promise<CartItemQuantityResponse> => {
-  const response = await fetch(`/api/cart/items/${productId}/`, {
+  const response = await fetch(`${API_BASE_URL}/api/cart/items/${productId}/`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
