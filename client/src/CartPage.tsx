@@ -14,6 +14,7 @@ import CheckBox from './common/CheckBox';
 import Stepper from './common/Stepper';
 import NoticeIcon from './Icons/NoticeIcon';
 import type { OrderItem } from './OrderConfirmPage';
+import OrderSummaryRow from './OrderSummaryRow';
 
 const CartItemListPage = () => {
   const navigate = useNavigate();
@@ -153,22 +154,12 @@ const CartItemListPage = () => {
 
           <SummaryDivider />
 
-          <SummaryRow>
-            <SummaryLabel>주문 금액</SummaryLabel>
-            <SummaryValue>{orderAmount.toLocaleString()}원</SummaryValue>
-          </SummaryRow>
-
-          <SummaryRow>
-            <SummaryLabel>배송비</SummaryLabel>
-            <SummaryValue>{shippingFee.toLocaleString()}원</SummaryValue>
-          </SummaryRow>
+          <OrderSummaryRow label="주문 금액" amount={orderAmount} />
+          <OrderSummaryRow label="배송비" amount={shippingFee} />
 
           <SummaryDivider />
 
-          <SummaryRow>
-            <SummaryLabel>총 결제 금액</SummaryLabel>
-            <SummaryValue>{totalPaymentAmount.toLocaleString()}원</SummaryValue>
-          </SummaryRow>
+          <OrderSummaryRow label="총 결제 금액" amount={totalPaymentAmount} />
         </>
       )}
 
@@ -236,24 +227,6 @@ const RemoveButton = styled.button`
   border-radius: 0.25rem;
   background-color: #ffffff;
   font-size: 0.625rem;
-`;
-
-const SummaryRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0.75rem 0 0;
-`;
-
-const SummaryLabel = styled.span`
-  font-weight: 700;
-  font-size: 1rem;
-`;
-
-const SummaryValue = styled.strong`
-  font-weight: 700;
-  font-style: Bold;
-  font-size: 1.5rem;
 `;
 
 const SummaryDivider = styled.hr`
