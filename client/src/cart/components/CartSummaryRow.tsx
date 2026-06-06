@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 
-interface OrderSummaryRowProps {
+interface CartSummaryRowProps {
   amount: number;
   label: string;
 }
 
-const OrderSummaryRow = ({ amount, label }: OrderSummaryRowProps) => {
+const CartSummaryRow = ({ amount, label }: CartSummaryRowProps) => {
   return (
     <Row>
       <Label>{label}</Label>
@@ -31,4 +31,4 @@ const Value = styled.strong`
   font-size: 1.5rem;
 `;
 
-export default OrderSummaryRow;
+export default CartSummaryRow;

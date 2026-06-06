@@ -1,82 +1,39 @@
 import styled from '@emotion/styled';
 import PageLayout from '../components/PageLayout';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  deleteCartItems,
-  getCartItems,
-  patchCartItemQuantity,
-  type CartItemResponse,
-} from './apis/cart';
-import CartItem from '../CartItem';
 import Button from '../components/Button';
 import CheckBox from '../components/CheckBox';
 import Stepper from '../components/Stepper';
 import NoticeIcon from '../Icons/NoticeIcon';
 import type { OrderItem } from '../order/OrderConfirmPage';
-import OrderSummaryRow from './components/OrderSummaryRow';
+import { useCartItems } from './hooks/useCartItems';
+import { useCartSelection } from './hooks/useCartSelection';
+import CartSummaryRow from './components/CartSummaryRow';
+import CartItem from './components/CartItem';
+import { calCartSummary } from './utils/calculateCartSummary';
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState<CartItemResponse[]>([]);
-  const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
+  const { cartItems, removeCartItem, updateCartItemQuantity } = useCartItems();
+  const {
+    selectedProductIds,
+    isAllSelected,
+    toggleItem,
+    toggleAll,
+    deselectItem,
+  } = useCartSelection(cartItems);
 
-  //setSelectedProductIds(items.map((item) => item.product.id));
+  const { orderAmount, shippingFee, totalPaymentAmount } = calCartSummary(
+    cartItems,
+    selectedProductIds,
+  );
 
-  const removeCartItem = async (productId: number) => {
-    await deleteCartItems(productId);
-
-    setCartItems((prevCartItems) =>
-      prevCartItems.filter(({ product }) => product.id !== productId),
-    );
-
-    setSelectedProductIds((prevSelectedIds) =>
-      prevSelectedIds.filter((id) => id !== productId),
-    );
+  const handleCartItemRemove = async (productId: number) => {
+    await removeCartItem(productId);
+    deselectItem(productId);
   };
 
-  const updateCartItemQuantity = async (
-    productId: number,
-    quantity: number,
-  ) => {
-    const updatedCartItem = await patchCartItemQuantity(productId, quantity);
-
-    setCartItems((prevCartItems) =>
-      prevCartItems.map((cartItem) =>
-        cartItem.product.id === updatedCartItem.productId
-          ? { ...cartItem, quantity: updatedCartItem.quantity }
-          : cartItem,
-      ),
-    );
-  };
-
-  const isCartEmpty = cartItems.length === 0;
-  const isAllSelected =
-    !isCartEmpty && selectedProductIds.length === cartItems.length;
-
-  const orderAmount = cartItems
-    .filter(({ product }) => selectedProductIds.includes(product.id))
-    .reduce(
-      (total, { product, quantity }) => total + product.price * quantity,
-      0,
-    );
-  const shippingFee = orderAmount >= 100000 ? 0 : 3000;
-  const totalPaymentAmount = orderAmount + shippingFee;
-
-  const toggleItemSelection = (productId: number) => {
-    setSelectedProductIds((prevSelectedIds) =>
-      prevSelectedIds.includes(productId)
-        ? prevSelectedIds.filter((id) => id !== productId)
-        : [...prevSelectedIds, productId],
-    );
-  };
-
-  const toggleAllItemSelection = () => {
-    if (isAllSelected) return setSelectedProductIds([]);
-    setSelectedProductIds(cartItems.map((item) => item.product.id));
-  };
-
-  const moveToOrderConfirmPage = () => {
+  const handleOrderConfirm = () => {
     const orderItems: OrderItem[] = cartItems
       .filter(({ product }) => selectedProductIds.includes(product.id))
       .map(({ product, quantity }) => ({
@@ -87,13 +44,10 @@ const CartPage = () => {
         quantity,
       }));
 
-    navigate('/order-confirm', {
-      state: {
-        orderItems,
-        shippingFee,
-      },
-    });
+    navigate('/order-confirm', { state: { orderItems, shippingFee } });
   };
+
+  const isCartEmpty = cartItems.length === 0;
 
   return (
     <PageLayout headerContent={<Logo>SHOP</Logo>}>
@@ -112,7 +66,7 @@ const CartPage = () => {
               <CheckBox
                 checked={isAllSelected}
                 label="전체선택"
-                onToggle={toggleAllItemSelection}
+                onToggle={toggleAll}
               />
             </SelectAllControl>
 
@@ -122,11 +76,11 @@ const CartPage = () => {
                   <CheckBox
                     ariaLabel={`${product.name} 선택`}
                     checked={selectedProductIds.includes(product.id)}
-                    onToggle={() => toggleItemSelection(product.id)}
+                    onToggle={() => toggleItem(product.id)}
                   />
                   <RemoveButton
                     type="button"
-                    onClick={() => removeCartItem(product.id)}
+                    onClick={() => handleCartItemRemove(product.id)}
                   >
                     삭제
                   </RemoveButton>
@@ -153,13 +107,13 @@ const CartPage = () => {
             </ShippingNotice>
           </CartItemsSection>
 
-          <OrderSummarySection aria-label="주문 금액 요약">
-            <OrderSummaryRow label="주문 금액" amount={orderAmount} />
-            <OrderSummaryRow label="배송비" amount={shippingFee} />
+          <CartSummarySection aria-label="주문 금액 요약">
+            <CartSummaryRow label="주문 금액" amount={orderAmount} />
+            <CartSummaryRow label="배송비" amount={shippingFee} />
 
             <SummaryDivider />
-            <OrderSummaryRow label="총 결제 금액" amount={totalPaymentAmount} />
-          </OrderSummarySection>
+            <CartSummaryRow label="총 결제 금액" amount={totalPaymentAmount} />
+          </CartSummarySection>
         </>
       )}
 
@@ -167,7 +121,7 @@ const CartPage = () => {
         <Button
           fullWidth
           disabled={selectedProductIds.length === 0}
-          onClick={moveToOrderConfirmPage}
+          onClick={handleOrderConfirm}
         >
           주문 확인
         </Button>
@@ -240,7 +194,7 @@ const RemoveButton = styled.button`
   font-size: 0.625rem;
 `;
 
-const OrderSummarySection = styled.section`
+const CartSummarySection = styled.section`
   margin-top: 0.75rem;
   border-top: 1px solid #0000001a;
 `;
