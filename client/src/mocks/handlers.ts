@@ -14,6 +14,12 @@ const products: Product[] = [
     thumbnail: 'https://placehold.co/211x211?text=Socks',
     price: 25000,
   },
+  {
+    id: 3,
+    name: '양말',
+    thumbnail: 'https://placehold.co/211x211?text=Socks',
+    price: 25000,
+  },
 ];
 
 let cartItems = [
@@ -23,6 +29,10 @@ let cartItems = [
   },
   {
     productId: 2,
+    quantity: 2,
+  },
+  {
+    productId: 3,
     quantity: 2,
   },
 ];

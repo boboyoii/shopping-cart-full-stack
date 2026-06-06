@@ -7,6 +7,7 @@ import {
   type CartItemResponse,
 } from './apis/cart';
 import CartItem from './CartItem';
+import Button from './common/Button';
 import CheckBox from './common/CheckBox';
 import NoticeIcon from './Icons/NoticeIcon';
 
@@ -125,6 +126,12 @@ const CartItemListPage = () => {
           </SummaryRow>
         </>
       )}
+
+      <BottomButtonWrapper>
+        <Button fullWidth disabled={selectedProductIds.length === 0}>
+          주문 확인
+        </Button>
+      </BottomButtonWrapper>
     </PageLayout>
   );
 };
@@ -205,6 +212,16 @@ const SummaryDivider = styled.hr`
   margin: 0.75rem 0;
   border: 0;
   background-color: #0000001a;
+`;
+
+const BottomButtonWrapper = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  width: 100%;
+  max-width: 26rem;
+  transform: translateX(-50%);
+  z-index: 100;
 `;
 
 export default CartItemListPage;

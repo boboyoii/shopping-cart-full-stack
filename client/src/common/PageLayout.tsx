@@ -37,8 +37,7 @@ const HeaderContent = styled.div`
 `;
 
 const Main = styled.main`
-  min-height: calc(100vh - 4rem);
-  padding: 2.25rem 1.5rem;
+  padding: 2.25rem 1.5rem 6.25rem;
 `;
 
 export default PageLayout;
