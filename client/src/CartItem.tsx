@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
+import type { ReactNode } from 'react';
 
 interface CartItemProps {
+  children: ReactNode;
   name: string;
   thumbnail: string;
   price: number;
-  quantity: number;
 }
 
-const CartItem = ({ name, thumbnail, price, quantity }: CartItemProps) => {
+const CartItem = ({ children, name, thumbnail, price }: CartItemProps) => {
   return (
     <Content>
       <Thumbnail src={thumbnail} alt={name} />
@@ -16,11 +17,7 @@ const CartItem = ({ name, thumbnail, price, quantity }: CartItemProps) => {
         <Name>{name}</Name>
         <Price>{price.toLocaleString()}원</Price>
 
-        <QuantityControl>
-          <QuantityButton type="button">-</QuantityButton>
-          <Quantity>{quantity}</Quantity>
-          <QuantityButton type="button">+</QuantityButton>
-        </QuantityControl>
+        <QuantityControl>{children}</QuantityControl>
       </ProductInfo>
     </Content>
   );
@@ -56,23 +53,7 @@ const Price = styled.strong`
 `;
 
 const QuantityControl = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   margin-top: 0.75rem;
-`;
-
-const QuantityButton = styled.button`
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 1px solid #0000001a;
-  border-radius: 0.5rem;
-  background-color: #ffffff;
-`;
-
-const Quantity = styled.span`
-  font-weight: 500;
-  font-size: 0.75rem;
 `;
 
 export default CartItem;

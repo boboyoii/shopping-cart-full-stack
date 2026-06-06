@@ -4,11 +4,13 @@ import { useEffect, useState } from 'react';
 import {
   deleteCartItems,
   getCartItems,
+  patchCartItemQuantity,
   type CartItemResponse,
 } from './apis/cart';
 import CartItem from './CartItem';
 import Button from './common/Button';
 import CheckBox from './common/CheckBox';
+import Stepper from './common/Stepper';
 import NoticeIcon from './Icons/NoticeIcon';
 
 const CartItemListPage = () => {
@@ -35,6 +37,21 @@ const CartItemListPage = () => {
 
     setSelectedProductIds((prevSelectedIds) =>
       prevSelectedIds.filter((id) => id !== productId),
+    );
+  };
+
+  const updateCartItemQuantity = async (
+    productId: number,
+    quantity: number,
+  ) => {
+    const updatedCartItem = await patchCartItemQuantity(productId, quantity);
+
+    setCartItems((prevCartItems) =>
+      prevCartItems.map((cartItem) =>
+        cartItem.product.id === updatedCartItem.productId
+          ? { ...cartItem, quantity: updatedCartItem.quantity }
+          : cartItem,
+      ),
     );
   };
 
@@ -97,8 +114,14 @@ const CartItemListPage = () => {
                 name={product.name}
                 thumbnail={product.thumbnail}
                 price={product.price}
-                quantity={quantity}
-              />
+              >
+                <Stepper
+                  value={quantity}
+                  onChange={(nextQuantity) =>
+                    updateCartItemQuantity(product.id, nextQuantity)
+                  }
+                />
+              </CartItem>
             </ItemWrapper>
           ))}
 

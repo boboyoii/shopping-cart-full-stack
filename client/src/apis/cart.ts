@@ -37,7 +37,7 @@ export const deleteCartItems = async (productId: number): Promise<void> => {
   }
 };
 
-export const updateCartItemQuantity = async (
+export const patchCartItemQuantity = async (
   productId: number,
   quantity: number,
 ): Promise<CartItemQuantityResponse> => {

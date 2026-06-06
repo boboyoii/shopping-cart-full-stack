@@ -33,7 +33,7 @@ let cartItems = [
   },
   {
     productId: 3,
-    quantity: 2,
+    quantity: 98,
   },
 ];
 
