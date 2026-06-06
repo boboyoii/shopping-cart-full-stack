@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import PageLayout from './common/PageLayout';
+import PageLayout from '../components/PageLayout';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -8,29 +8,20 @@ import {
   patchCartItemQuantity,
   type CartItemResponse,
 } from './apis/cart';
-import CartItem from './CartItem';
-import Button from './common/Button';
-import CheckBox from './common/CheckBox';
-import Stepper from './common/Stepper';
-import NoticeIcon from './Icons/NoticeIcon';
-import type { OrderItem } from './OrderConfirmPage';
-import OrderSummaryRow from './OrderSummaryRow';
+import CartItem from '../CartItem';
+import Button from '../components/Button';
+import CheckBox from '../components/CheckBox';
+import Stepper from '../components/Stepper';
+import NoticeIcon from '../Icons/NoticeIcon';
+import type { OrderItem } from '../order/OrderConfirmPage';
+import OrderSummaryRow from './components/OrderSummaryRow';
 
 const CartPage = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState<CartItemResponse[]>([]);
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
 
-  useEffect(() => {
-    const loadCartItems = async () => {
-      const items = await getCartItems();
-
-      setCartItems(items);
-      setSelectedProductIds(items.map((item) => item.product.id));
-    };
-
-    loadCartItems();
-  }, []);
+  //setSelectedProductIds(items.map((item) => item.product.id));
 
   const removeCartItem = async (productId: number) => {
     await deleteCartItems(productId);

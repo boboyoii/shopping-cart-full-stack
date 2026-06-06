@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw';
-import type { Product } from '../apis/cart';
+import type { Product } from '../cart/apis/cart';
 
 const products: Product[] = [
   {

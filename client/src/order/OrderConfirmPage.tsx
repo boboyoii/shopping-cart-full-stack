@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import PageLayout from './common/PageLayout';
-import BackIcon from './Icons/BackIcon';
-import Button from './common/Button';
+import PageLayout from '../components/PageLayout';
+import BackIcon from '../Icons/BackIcon';
+import Button from '../components/Button';
 
 export interface OrderItem {
   productId: number;

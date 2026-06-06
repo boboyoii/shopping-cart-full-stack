@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import CheckBox from '../common/CheckBox';
+import CheckBox from '../components/CheckBox';
 
 const meta = {
   title: 'Common/CheckBox',
