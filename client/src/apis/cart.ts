@@ -10,6 +10,11 @@ export interface CartItemResponse {
   quantity: number;
 }
 
+export interface CartItemQuantityResponse {
+  productId: number;
+  quantity: number;
+}
+
 export const getCartItems = async (): Promise<CartItemResponse[]> => {
   const response = await fetch('/api/cart/');
 
@@ -30,4 +35,28 @@ export const deleteCartItems = async (productId: number): Promise<void> => {
   if (!response.ok) {
     throw new Error('장바구니 상품을 제거하지 못했습니다.');
   }
+};
+
+export const updateCartItemQuantity = async (
+  productId: number,
+  quantity: number,
+): Promise<CartItemQuantityResponse> => {
+  const response = await fetch(`/api/cart/items/${productId}/`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ quantity }),
+  });
+
+  if (!response.ok) {
+    throw new Error('장바구니 상품 수량을 변경하지 못했습니다.');
+  }
+
+  const data = await response.json();
+
+  return {
+    productId: Number(data.product_id),
+    quantity: data.quantity,
+  };
 };
