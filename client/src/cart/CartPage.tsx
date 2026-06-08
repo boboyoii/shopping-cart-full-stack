@@ -3,14 +3,13 @@ import PageLayout from '../components/PageLayout';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import CheckBox from '../components/CheckBox';
-import Stepper from '../components/Stepper';
 import NoticeIcon from '../Icons/NoticeIcon';
 import type { OrderItem } from '../order/OrderConfirmPage';
 import { useCartItems } from './hooks/useCartItems';
 import { useCartSelection } from './hooks/useCartSelection';
 import CartSummaryRow from './components/CartSummaryRow';
-import CartItem from './components/CartItem';
 import { calCartSummary } from './utils/calculateCartSummary';
+import CartItemRow from './components/CartItemRow';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -71,34 +70,17 @@ const CartPage = () => {
             </SelectAllControl>
 
             {cartItems.map(({ product, quantity }) => (
-              <CartItemContainer key={product.id}>
-                <ItemHeader>
-                  <CheckBox
-                    ariaLabel={`${product.name} 선택`}
-                    checked={selectedProductIds.includes(product.id)}
-                    onToggle={() => toggleItem(product.id)}
-                  />
-                  <RemoveButton
-                    type="button"
-                    onClick={() => handleCartItemRemove(product.id)}
-                  >
-                    삭제
-                  </RemoveButton>
-                </ItemHeader>
-
-                <CartItem
-                  name={product.name}
-                  thumbnail={product.thumbnail}
-                  price={product.price}
-                >
-                  <Stepper
-                    value={quantity}
-                    onChange={(nextQuantity) =>
-                      updateCartItemQuantity(product.id, nextQuantity)
-                    }
-                  />
-                </CartItem>
-              </CartItemContainer>
+              <CartItemRow
+                key={product.id}
+                product={product}
+                quantity={quantity}
+                checked={selectedProductIds.includes(product.id)}
+                onCheckedChange={() => toggleItem(product.id)}
+                onQuantityChange={(nextQuantity) =>
+                  updateCartItemQuantity(product.id, nextQuantity)
+                }
+                onRemoveClick={() => handleCartItemRemove(product.id)}
+              />
             ))}
 
             <ShippingNotice>
@@ -173,25 +155,6 @@ const EmptyCartState = styled.p`
   margin: 0;
   font-weight: 400;
   font-size: 1rem;
-`;
-
-const CartItemContainer = styled.div`
-  padding-block: 0.75rem;
-  border-top: 1px solid #0000001a;
-`;
-
-const ItemHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const RemoveButton = styled.button`
-  padding: 0.3rem 0.55rem;
-  border: 1px solid #0000001a;
-  border-radius: 0.25rem;
-  background-color: #ffffff;
-  font-size: 0.625rem;
 `;
 
 const CartSummarySection = styled.section`

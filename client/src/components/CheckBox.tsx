@@ -9,12 +9,7 @@ interface CheckBoxProps {
   onToggle: () => void;
 }
 
-const CheckBox = ({
-  ariaLabel,
-  checked,
-  label,
-  onToggle,
-}: CheckBoxProps) => {
+const CheckBox = ({ ariaLabel, checked, label, onToggle }: CheckBoxProps) => {
   return (
     <Button
       type="button"
