@@ -5,7 +5,7 @@ import BackIcon from '../Icons/BackIcon';
 import Button from '../components/Button';
 
 export interface OrderItem {
-  productId: number;
+  productId: string;
   name: string;
   thumbnail: string;
   price: number;

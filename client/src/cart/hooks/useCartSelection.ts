@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { CartItemResponse } from '../apis/cart';
 
 export const useCartSelection = (cartItems: CartItemResponse[]) => {
-  const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const hasInitialized = useRef(false);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export const useCartSelection = (cartItems: CartItemResponse[]) => {
   const isAllSelected =
     cartItems.length > 0 && selectedProductIds.length === cartItems.length;
 
-  const toggleItem = (productId: number) => {
+  const toggleItem = (productId: string) => {
     setSelectedProductIds((prev) =>
       prev.includes(productId)
         ? prev.filter((id) => id !== productId)
@@ -29,7 +29,7 @@ export const useCartSelection = (cartItems: CartItemResponse[]) => {
     );
   };
 
-  const deselectItem = (productId: number) => {
+  const deselectItem = (productId: string) => {
     setSelectedProductIds((prev) => prev.filter((id) => id !== productId));
   };
 

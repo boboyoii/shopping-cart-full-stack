@@ -5,7 +5,7 @@ const SHIPPING_FEE = 3_000;
 
 export const calCartSummary = (
   cartItems: CartItemResponse[],
-  selectedProductIds: number[],
+  selectedProductIds: string[],
 ) => {
   const orderAmount = cartItems
     .filter(({ product }) => selectedProductIds.includes(product.id))

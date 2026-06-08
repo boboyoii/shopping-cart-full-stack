@@ -13,7 +13,7 @@ export const useCartItems = () => {
     getCartItems().then((items) => setCartItems(items));
   }, []);
 
-  const removeCartItem = async (productId: number) => {
+  const removeCartItem = async (productId: string) => {
     await deleteCartItems(productId);
     setCartItems((prev) =>
       prev.filter(({ product }) => product.id !== productId),
@@ -21,7 +21,7 @@ export const useCartItems = () => {
   };
 
   const updateCartItemQuantity = async (
-    productId: number,
+    productId: string,
     quantity: number,
   ) => {
     const updated = await patchCartItemQuantity(productId, quantity);

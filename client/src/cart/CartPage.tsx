@@ -28,7 +28,7 @@ const CartPage = () => {
     selectedProductIds,
   );
 
-  const handleCartItemRemove = async (productId: number) => {
+  const handleCartItemRemove = async (productId: string) => {
     await removeCartItem(productId);
     deselectItem(productId);
   };

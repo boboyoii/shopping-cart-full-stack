@@ -3,19 +3,19 @@ import type { Product } from '../cart/apis/cart';
 
 const products: Product[] = [
   {
-    id: 1,
+    id: '1',
     name: '운동화',
     thumbnail: 'https://placehold.co/211x211?text=Sneakers',
     price: 35000,
   },
   {
-    id: 2,
+    id: '2',
     name: '양말',
     thumbnail: 'https://placehold.co/211x211?text=Socks',
     price: 25000,
   },
   {
-    id: 3,
+    id: '3',
     name: '양말',
     thumbnail: 'https://placehold.co/211x211?text=Socks',
     price: 25000,
@@ -24,20 +24,20 @@ const products: Product[] = [
 
 let cartItems = [
   {
-    productId: 1,
+    productId: '1',
     quantity: 2,
   },
   {
-    productId: 2,
+    productId: '2',
     quantity: 2,
   },
   {
-    productId: 3,
+    productId: '3',
     quantity: 98,
   },
 ];
 
-const getProduct = (productId: number) =>
+const getProduct = (productId: string) =>
   products.find((product) => product.id === productId);
 
 const getCartItems = () =>
@@ -55,7 +55,7 @@ export const handlers = [
   }),
 
   http.delete('/api/cart/items/:productId/', ({ params }) => {
-    const productId = Number(params.productId);
+    const productId = params.productId as string;
 
     cartItems = cartItems.filter((item) => item.productId !== productId);
 
@@ -65,7 +65,7 @@ export const handlers = [
   }),
 
   http.patch('/api/cart/items/:productId/', async ({ params, request }) => {
-    const productId = Number(params.productId);
+    const productId = params.productId as string;
     const { quantity } = (await request.json()) as { quantity?: number };
     const cartItem = cartItems.find((item) => item.productId === productId);
 

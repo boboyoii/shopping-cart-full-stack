@@ -1,8 +1,8 @@
 export interface Product {
-  id: number;
+  id: string;
   name: string;
-  thumbnail: string;
   price: number;
+  thumbnail: string;
 }
 
 export interface CartItemResponse {
@@ -11,7 +11,7 @@ export interface CartItemResponse {
 }
 
 export interface CartItemQuantityResponse {
-  productId: number;
+  productId: string;
   quantity: number;
 }
 
@@ -29,7 +29,7 @@ export const getCartItems = async (): Promise<CartItemResponse[]> => {
   return data.items;
 };
 
-export const deleteCartItems = async (productId: number): Promise<void> => {
+export const deleteCartItems = async (productId: string): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/api/cart/items/${productId}/`, {
     method: 'DELETE',
   });
@@ -40,7 +40,7 @@ export const deleteCartItems = async (productId: number): Promise<void> => {
 };
 
 export const patchCartItemQuantity = async (
-  productId: number,
+  productId: string,
   quantity: number,
 ): Promise<CartItemQuantityResponse> => {
   const response = await fetch(`${API_BASE_URL}/api/cart/items/${productId}/`, {
@@ -58,7 +58,7 @@ export const patchCartItemQuantity = async (
   const data = await response.json();
 
   return {
-    productId: Number(data.product_id),
+    productId: data.product_id,
     quantity: data.quantity,
   };
 };
