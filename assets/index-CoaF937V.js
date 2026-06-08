@@ -13732,7 +13732,7 @@ var FREE_SHIPPING_THRESHOLD = 1e5;
 var SHIPPING_FEE = 3e3;
 var calCartSummary = (cartItems, selectedProductIds) => {
 	const orderAmount = cartItems.filter(({ product }) => selectedProductIds.includes(product.id)).reduce((total, { product, quantity }) => total + product.price * quantity, 0);
-	const shippingFee = orderAmount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+	const shippingFee = orderAmount === 0 || orderAmount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
 	return {
 		orderAmount,
 		shippingFee,
