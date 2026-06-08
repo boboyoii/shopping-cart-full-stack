@@ -11,6 +11,7 @@ import CartSummaryRow from './components/CartSummaryRow';
 import { calCartSummary } from './utils/calculateCartSummary';
 import CartItemRow from './components/CartItemRow';
 import CartContent from './components/CartContent';
+import { localSelectionStorage } from '../repositories/localSelectionStorage';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const CartPage = () => {
     toggleItem,
     toggleAll,
     deselectItem,
-  } = useCartSelection(cartItems);
+  } = useCartSelection(cartItems, localSelectionStorage);
 
   const { orderAmount, shippingFee, totalPaymentAmount } = calCartSummary(
     cartItems,
