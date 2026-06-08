@@ -13,7 +13,13 @@ import CartItemRow from './components/CartItemRow';
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const { cartItems, removeCartItem, updateCartItemQuantity } = useCartItems();
+  const {
+    cartItems,
+    isLoading,
+    error,
+    removeCartItem,
+    updateCartItemQuantity,
+  } = useCartItems();
   const {
     selectedProductIds,
     isAllSelected,
@@ -75,8 +81,14 @@ const CartPage = () => {
     <PageLayout headerContent={<Logo>SHOP</Logo>}>
       <Title>장바구니</Title>
 
-      {isCartEmpty ? (
-        <EmptyCartState>장바구니에 담은 상품이 없습니다.</EmptyCartState>
+      {isLoading ? (
+        <StatusMessage>장바구니를 불러오는 중입니다.</StatusMessage>
+      ) : error ? (
+        <StatusMessage role="alert">
+          장바구니 상품을 불러오지 못했습니다.
+        </StatusMessage>
+      ) : isCartEmpty ? (
+        <StatusMessage>장바구니에 담은 상품이 없습니다.</StatusMessage>
       ) : (
         <>
           <CartItemsSection aria-label="장바구니 상품">
@@ -169,7 +181,7 @@ const ShippingNotice = styled.p`
   font-size: 0.75rem;
 `;
 
-const EmptyCartState = styled.p`
+const StatusMessage = styled.p`
   min-height: 30rem;
   display: flex;
   align-items: center;

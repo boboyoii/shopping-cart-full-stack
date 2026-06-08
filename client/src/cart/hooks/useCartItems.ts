@@ -8,9 +8,26 @@ import {
 
 export const useCartItems = () => {
   const [cartItems, setCartItems] = useState<CartItemResponse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    getCartItems().then((items) => setCartItems(items));
+    const fetchCartItems = async () => {
+      try {
+        const items = await getCartItems();
+        setCartItems(items);
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error
+            : new Error('장바구니 상품 목록을 불러오지 못했습니다.'),
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCartItems();
   }, []);
 
   const removeCartItem = async (productId: string) => {
@@ -34,5 +51,11 @@ export const useCartItems = () => {
     );
   };
 
-  return { cartItems, removeCartItem, updateCartItemQuantity };
+  return {
+    cartItems,
+    isLoading,
+    error,
+    removeCartItem,
+    updateCartItemQuantity,
+  };
 };
