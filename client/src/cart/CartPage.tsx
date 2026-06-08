@@ -28,8 +28,31 @@ const CartPage = () => {
   );
 
   const handleCartItemRemove = async (productId: string) => {
-    await removeCartItem(productId);
-    deselectItem(productId);
+    try {
+      await removeCartItem(productId);
+      deselectItem(productId);
+    } catch (error) {
+      alert(
+        error instanceof Error
+          ? error.message
+          : '장바구니 상품을 삭제하지 못했습니다.',
+      );
+    }
+  };
+
+  const handleCartItemQuantityChange = async (
+    productId: string,
+    quantity: number,
+  ) => {
+    try {
+      await updateCartItemQuantity(productId, quantity);
+    } catch (error) {
+      alert(
+        error instanceof Error
+          ? error.message
+          : '장바구니 상품 수량을 변경하지 못했습니다.',
+      );
+    }
   };
 
   const handleOrderConfirm = () => {
@@ -77,7 +100,7 @@ const CartPage = () => {
                 checked={selectedProductIds.includes(product.id)}
                 onCheckedChange={() => toggleItem(product.id)}
                 onQuantityChange={(nextQuantity) =>
-                  updateCartItemQuantity(product.id, nextQuantity)
+                  handleCartItemQuantityChange(product.id, nextQuantity)
                 }
                 onRemoveClick={() => handleCartItemRemove(product.id)}
               />
