@@ -10,7 +10,7 @@ import { useCartSelection } from './hooks/useCartSelection';
 import CartSummaryRow from './components/CartSummaryRow';
 import { calCartSummary } from './utils/calculateCartSummary';
 import CartItemRow from './components/CartItemRow';
-import Spinner from '../components/Spinner';
+import CartContent from './components/CartContent';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -82,60 +82,47 @@ const CartPage = () => {
     <PageLayout headerContent={<Logo>SHOP</Logo>}>
       <Title>장바구니</Title>
 
-      {isLoading ? (
-        <LoadingState role="status" aria-label="장바구니를 불러오는 중입니다.">
-          <Spinner aria-hidden="true" />
-        </LoadingState>
-      ) : error ? (
-        <StatusMessage role="alert">
-          장바구니 상품을 불러오지 못했습니다.
-        </StatusMessage>
-      ) : isCartEmpty ? (
-        <StatusMessage>장바구니에 담은 상품이 없습니다.</StatusMessage>
-      ) : (
-        <>
-          <CartItemsSection aria-label="장바구니 상품">
-            <ItemCountDescription>
-              현재 {cartItems.length}종류의 상품이 담겨있습니다.
-            </ItemCountDescription>
+      <CartContent isLoading={isLoading} error={error} isEmpty={isCartEmpty}>
+        <CartItemsSection aria-label="장바구니 상품">
+          <ItemCountDescription>
+            현재 {cartItems.length}종류의 상품이 담겨있습니다.
+          </ItemCountDescription>
 
-            <SelectAllControl>
-              <CheckBox
-                checked={isAllSelected}
-                label="전체선택"
-                onToggle={toggleAll}
-              />
-            </SelectAllControl>
+          <SelectAllControl>
+            <CheckBox
+              checked={isAllSelected}
+              label="전체선택"
+              onToggle={toggleAll}
+            />
+          </SelectAllControl>
 
-            {cartItems.map(({ product, quantity }) => (
-              <CartItemRow
-                key={product.id}
-                product={product}
-                quantity={quantity}
-                checked={selectedProductIds.includes(product.id)}
-                onCheckedChange={() => toggleItem(product.id)}
-                onQuantityChange={(nextQuantity) =>
-                  handleCartItemQuantityChange(product.id, nextQuantity)
-                }
-                onRemoveClick={() => handleCartItemRemove(product.id)}
-              />
-            ))}
+          {cartItems.map(({ product, quantity }) => (
+            <CartItemRow
+              key={product.id}
+              product={product}
+              quantity={quantity}
+              checked={selectedProductIds.includes(product.id)}
+              onCheckedChange={() => toggleItem(product.id)}
+              onQuantityChange={(nextQuantity) =>
+                handleCartItemQuantityChange(product.id, nextQuantity)
+              }
+              onRemoveClick={() => handleCartItemRemove(product.id)}
+            />
+          ))}
 
-            <ShippingNotice>
-              <NoticeIcon />총 주문 금액이 100,000원 이상일 경우 무료
-              배송됩니다.
-            </ShippingNotice>
-          </CartItemsSection>
+          <ShippingNotice>
+            <NoticeIcon />총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.
+          </ShippingNotice>
+        </CartItemsSection>
 
-          <CartSummarySection aria-label="주문 금액 요약">
-            <CartSummaryRow label="주문 금액" amount={orderAmount} />
-            <CartSummaryRow label="배송비" amount={shippingFee} />
+        <CartSummarySection aria-label="주문 금액 요약">
+          <CartSummaryRow label="주문 금액" amount={orderAmount} />
+          <CartSummaryRow label="배송비" amount={shippingFee} />
 
-            <SummaryDivider />
-            <CartSummaryRow label="총 결제 금액" amount={totalPaymentAmount} />
-          </CartSummarySection>
-        </>
-      )}
+          <SummaryDivider />
+          <CartSummaryRow label="총 결제 금액" amount={totalPaymentAmount} />
+        </CartSummarySection>
+      </CartContent>
 
       <BottomButtonWrapper>
         <Button
@@ -182,24 +169,6 @@ const ShippingNotice = styled.p`
   margin: 0.5rem 0;
   font-weight: 500;
   font-size: 0.75rem;
-`;
-
-const StatusMessage = styled.p`
-  min-height: 30rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  margin: 0;
-  font-weight: 400;
-  font-size: 1rem;
-`;
-
-const LoadingState = styled.div`
-  min-height: 30rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `;
 
 const CartSummarySection = styled.section`
