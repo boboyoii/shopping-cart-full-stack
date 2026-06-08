@@ -14,7 +14,10 @@ export const calCartSummary = (
       0,
     );
 
-  const shippingFee = orderAmount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+  const shippingFee =
+    orderAmount === 0 || orderAmount >= FREE_SHIPPING_THRESHOLD
+      ? 0
+      : SHIPPING_FEE;
 
   return {
     orderAmount,
