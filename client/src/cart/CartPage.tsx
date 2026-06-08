@@ -10,6 +10,7 @@ import { useCartSelection } from './hooks/useCartSelection';
 import CartSummaryRow from './components/CartSummaryRow';
 import { calCartSummary } from './utils/calculateCartSummary';
 import CartItemRow from './components/CartItemRow';
+import Spinner from '../components/Spinner';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -82,7 +83,9 @@ const CartPage = () => {
       <Title>장바구니</Title>
 
       {isLoading ? (
-        <StatusMessage>장바구니를 불러오는 중입니다.</StatusMessage>
+        <LoadingState role="status" aria-label="장바구니를 불러오는 중입니다.">
+          <Spinner aria-hidden="true" />
+        </LoadingState>
       ) : error ? (
         <StatusMessage role="alert">
           장바구니 상품을 불러오지 못했습니다.
@@ -190,6 +193,13 @@ const StatusMessage = styled.p`
   margin: 0;
   font-weight: 400;
   font-size: 1rem;
+`;
+
+const LoadingState = styled.div`
+  min-height: 30rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const CartSummarySection = styled.section`
