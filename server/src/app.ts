@@ -22,7 +22,11 @@ export function createApp({
 
   router.use(
     cors({
-      origin: ['http://localhost:3000', 'http://localhost:5173'],
+      origin: [
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'https://boboyoii.github.io',
+      ],
     }),
   );
 
