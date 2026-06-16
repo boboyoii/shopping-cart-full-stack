@@ -7,6 +7,7 @@ import {
 import { ProductController } from './controllers/productController.js';
 import { CartController } from './controllers/cartController.js';
 import { handleErrors } from './errors.js';
+import { DEFAULT_SHIPPING_FEE, FREE_SHIPPING_THRESHOLD } from './constanst.js';
 
 export function createApp({
   productController,
@@ -43,6 +44,13 @@ export function createApp({
     .route('/api/cart/items/:productId/')
     .patch(cartBodyValidateMiddelware, cartController.update)
     .delete(cartController.delete);
+
+  router.route('/api/shipping-policy/').get((_req, res) => {
+    res.send({
+      baseFee: DEFAULT_SHIPPING_FEE,
+      freeShippingThreshold: FREE_SHIPPING_THRESHOLD,
+    });
+  });
 
   router.use(
     (

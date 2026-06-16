@@ -207,3 +207,20 @@ describe('카트 API 테스트', () => {
     });
   });
 });
+
+describe('배송 정책 API 테스트', () => {
+  const storage = new InMemoryStorage();
+  const productController = createProductController(storage);
+  const cartController = createCartController(storage);
+  const app = createApp({ productController, cartController });
+
+  test('배송비 정책을 반환한다.', async () => {
+    const res = await request(app).get('/api/shipping-policy/');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      baseFee: 3000,
+      freeShippingThreshold: 100000,
+    });
+  });
+});
