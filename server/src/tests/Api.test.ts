@@ -7,13 +7,21 @@ import Cart from '../models/Cart.js';
 import { createCartController } from '../controllers/cartController.js';
 import { createProductController } from '../controllers/productController.js';
 import { ProductType } from '../models/Product.js';
+import { USER_ID } from '../constanst.js';
+import { createOrderSheetController } from '../controllers/orderSheetController.js';
+import OrderSheet from '../models/OrderSheet.js';
 
 describe('프로덕트 API 테스트', () => {
   const storage = new InMemoryStorage();
   const cartController = createCartController(storage);
   const productController = createProductController(storage);
+  const orderSheetController = createOrderSheetController(storage);
 
-  const app = createApp({ productController, cartController });
+  const app = createApp({
+    productController,
+    cartController,
+    orderSheetController,
+  });
   const product1 = new Product('피자', 30000, 'pizza.png');
   const product2 = new Product('치킨', 20000, 'chicken.png');
 
@@ -128,8 +136,13 @@ describe('카트 API 테스트', () => {
   const storage = new InMemoryStorage();
   const productController = createProductController(storage);
   const cartController = createCartController(storage);
-  const app = createApp({ productController, cartController });
-  const cart = storage.getItemById('cart', 'my-cart') as Cart;
+  const orderSheetController = createOrderSheetController(storage);
+  const app = createApp({
+    productController,
+    cartController,
+    orderSheetController,
+  });
+  const cart = storage.getItemById('cart', USER_ID) as Cart;
 
   const product1 = new Product('수건', 10000, '/some_image2');
   const product2 = new Product('칫솔', 5000, '/some_image');
@@ -208,11 +221,100 @@ describe('카트 API 테스트', () => {
   });
 });
 
+describe('주문서 API 테스트', () => {
+  const storage = new InMemoryStorage();
+  const productController = createProductController(storage);
+  const cartController = createCartController(storage);
+  const orderSheetController = createOrderSheetController(storage);
+  const app = createApp({
+    productController,
+    cartController,
+    orderSheetController,
+  });
+  const cart = storage.getItemById('cart', USER_ID) as Cart;
+
+  const product1 = new Product('수건', 10000, '/some_image2');
+  const product2 = new Product('칫솔', 5000, '/some_image');
+
+  beforeEach(() => {
+    storage.addItemById('products', product1.getId(), product1);
+    storage.addItemById('products', product2.getId(), product2);
+
+    cart.updateItemByProductId(product1.getId(), 3);
+  });
+
+  afterEach(() => {
+    storage.clearAllItems('products');
+    storage.clearAllItems('orderSheets');
+    cart.deleteItemByProductId(product1.getId());
+    cart.deleteItemByProductId(product2.getId());
+  });
+
+  test('장바구니에 담긴 상품으로 주문서를 생성한다.', async () => {
+    const res = await request(app)
+      .post('/api/order-sheets/')
+      .send({
+        items: [{ productId: product1.getId(), quantity: 3 }],
+      })
+      .set('Accept', 'application/json');
+
+    const orderSheet = storage.getItemById(
+      'orderSheets',
+      res.body.id,
+    ) as OrderSheet;
+
+    expect(res.status).toBe(201);
+    expect(orderSheet.toObject()).toEqual(
+      expect.objectContaining({
+        userId: USER_ID,
+        items: [{ productId: product1.getId(), quantity: 3 }],
+        selectedCoupons: [],
+        isRemoteShippingArea: false,
+      }),
+    );
+  });
+
+  test('장바구니에 없는 상품으로 주문서를 생성하려고 하면 404 에러가 발생한다.', async () => {
+    const res = await request(app)
+      .post('/api/order-sheets/')
+      .send({
+        items: [{ productId: product2.getId(), quantity: 1 }],
+      })
+      .set('Accept', 'application/json');
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({
+      code: 'RESOURCE_NOT_FOUND',
+      message: '요청한 리소스를 찾을 수 없습니다.',
+    });
+  });
+
+  test('존재하지 않는 상품으로 주문서를 생성하려고 하면 404 에러가 발생한다.', async () => {
+    const res = await request(app)
+      .post('/api/order-sheets/')
+      .send({
+        items: [{ productId: 'unknown', quantity: 1 }],
+      })
+      .set('Accept', 'application/json');
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({
+      code: 'RESOURCE_NOT_FOUND',
+      message: '요청한 리소스를 찾을 수 없습니다.',
+    });
+  });
+});
+
 describe('배송 정책 API 테스트', () => {
   const storage = new InMemoryStorage();
   const productController = createProductController(storage);
   const cartController = createCartController(storage);
-  const app = createApp({ productController, cartController });
+  const orderSheetController = createOrderSheetController(storage);
+  const app = createApp({
+    productController,
+    cartController,
+    orderSheetController,
+  });
 
   test('배송비 정책을 반환한다.', async () => {
     const res = await request(app).get('/api/shipping-policy/');

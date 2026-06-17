@@ -8,13 +8,16 @@ import { ProductController } from './controllers/productController.js';
 import { CartController } from './controllers/cartController.js';
 import { handleErrors } from './errors.js';
 import { DEFAULT_SHIPPING_FEE, FREE_SHIPPING_THRESHOLD } from './constanst.js';
+import { OrderSheetController } from './controllers/orderSheetController.js';
 
 export function createApp({
   productController,
   cartController,
+  orderSheetController,
 }: {
   productController: ProductController;
   cartController: CartController;
+  orderSheetController: OrderSheetController;
 }) {
   const app = express();
   const router = app.router;
@@ -51,6 +54,8 @@ export function createApp({
       freeShippingThreshold: FREE_SHIPPING_THRESHOLD,
     });
   });
+
+  router.route('/api/order-sheets/').post(orderSheetController.create);
 
   router.use(
     (

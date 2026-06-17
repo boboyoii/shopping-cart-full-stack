@@ -1,15 +1,16 @@
 import InMemoryStorage from './storages/InMemoryStorage.js';
 import { createApp } from './app.js';
-import { MY_CART_ID } from './constanst.js';
+import { USER_ID } from './constanst.js';
 import { createCartController } from './controllers/cartController.js';
 import { createProductController } from './controllers/productController.js';
 import Cart from './models/Cart.js';
 import Product from './models/Product.js';
+import { createOrderSheetController } from './controllers/orderSheetController.js';
 
 const PORT = process.env.PORT ?? 3000;
 
 const storage = new InMemoryStorage();
-const cart = storage.getItemById('cart', MY_CART_ID) as Cart;
+const cart = storage.getItemById('cart', USER_ID) as Cart;
 
 // 동작 확인을 위한 초기 데이터 추가
 const initialCartItems = [
@@ -64,7 +65,12 @@ initialCartItems.forEach(({ product, quantity }) => {
 
 const productController = createProductController(storage);
 const cartController = createCartController(storage);
-const app = createApp({ productController, cartController });
+const orderSheetController = createOrderSheetController(storage);
+const app = createApp({
+  productController,
+  cartController,
+  orderSheetController,
+});
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
