@@ -274,6 +274,27 @@ describe('주문서 API 테스트', () => {
     );
   });
 
+  test('주문서 ID로 주문서를 조회한다.', async () => {
+    const orderSheet = new OrderSheet(USER_ID, [
+      { productId: product1.getId(), quantity: 3 },
+    ]);
+    storage.addItemById('orderSheets', orderSheet.getId(), orderSheet);
+
+    const res = await request(app).get(
+      `/api/order-sheets/${orderSheet.getId()}/`,
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      orderSheet: {
+        id: orderSheet.getId(),
+        items: [{ product: product1.toObject(), quantity: 3 }],
+        isRemoteShippingArea: false,
+        selectedCoupons: [],
+      },
+    });
+  });
+
   test('장바구니에 없는 상품으로 주문서를 생성하려고 하면 404 에러가 발생한다.', async () => {
     const res = await request(app)
       .post('/api/order-sheets/')
@@ -296,6 +317,16 @@ describe('주문서 API 테스트', () => {
         items: [{ productId: 'unknown', quantity: 1 }],
       })
       .set('Accept', 'application/json');
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({
+      code: 'RESOURCE_NOT_FOUND',
+      message: '요청한 리소스를 찾을 수 없습니다.',
+    });
+  });
+
+  test('존재하지 않는 주문서를 조회하려고 하면 404 에러가 발생한다.', async () => {
+    const res = await request(app).get('/api/order-sheets/unknown/');
 
     expect(res.status).toBe(404);
     expect(res.body).toEqual({

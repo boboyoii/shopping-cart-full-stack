@@ -5,9 +5,11 @@ import { NotFoundError } from '../errors.js';
 import Cart from '../models/Cart.js';
 import { Storage } from '../storages/Storage.js';
 import OrderSheet from '../models/OrderSheet.js';
+import Product from '../models/Product.js';
 
 export interface OrderSheetController {
   create: express.RequestHandler;
+  get: express.RequestHandler<{ id: string }>;
 }
 
 interface CreateOrderSheetRequest {
@@ -40,6 +42,43 @@ export function createOrderSheetController(
         storage.addItemById('orderSheets', orderSheet.getId(), orderSheet);
 
         res.status(201).send({ id: orderSheet.getId() });
+      } catch (err) {
+        next(err);
+      }
+    },
+    get: (req, res, next) => {
+      try {
+        const { id } = req.params;
+        const orderSheet = storage.getItemById<OrderSheet>('orderSheets', id);
+
+        if (!orderSheet) {
+          throw new NotFoundError();
+        }
+
+        const {
+          userId,
+          items: orderItems,
+          ...orderSheetData
+        } = orderSheet.toObject();
+        const items = orderItems.map(({ productId, quantity }) => {
+          const product = storage.getItemById<Product>('products', productId);
+
+          if (!product) {
+            throw new NotFoundError();
+          }
+
+          return {
+            product: product.toObject(),
+            quantity,
+          };
+        });
+
+        res.status(200).send({
+          orderSheet: {
+            ...orderSheetData,
+            items,
+          },
+        });
       } catch (err) {
         next(err);
       }
