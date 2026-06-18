@@ -73,4 +73,26 @@ describe('OrderSheet Tests', () => {
       }),
     );
   });
+
+  test('선택한 쿠폰을 수정한다.', () => {
+    const orderSheet = new OrderSheet('user-1', [
+      {
+        product: {
+          id: 'product-1',
+          name: '피자',
+          price: 30000,
+          thumbnail: 'pizza.png',
+        },
+        quantity: 2,
+      },
+    ]);
+
+    orderSheet.updateCoupons(['FIXED5000', 'BOGO']);
+
+    expect(orderSheet.toObject()).toEqual(
+      expect.objectContaining({
+        selectedCoupons: ['FIXED5000', 'BOGO'],
+      }),
+    );
+  });
 });

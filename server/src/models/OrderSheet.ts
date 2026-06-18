@@ -36,6 +36,10 @@ class OrderSheet {
     this.#isRemoteShippingArea = isRemoteShippingArea;
   }
 
+  updateCoupons(selectedCoupons: string[]) {
+    this.#selectedCoupons = selectedCoupons;
+  }
+
   toObject(): OrderSheetType {
     return {
       id: this.#id,

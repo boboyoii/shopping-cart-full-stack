@@ -319,6 +319,30 @@ describe('주문서 API 테스트', () => {
     );
   });
 
+  test('주문서의 선택 쿠폰을 수정한다.', async () => {
+    const orderSheet = new OrderSheet(USER_ID, [
+      { product: product1.toObject(), quantity: 3 },
+    ]);
+    storage.addItemById('orderSheets', orderSheet.getId(), orderSheet);
+
+    const res = await request(app)
+      .patch(`/api/order-sheets/${orderSheet.getId()}/coupons/`)
+      .send({ selectedCoupons: ['FIXED5000', 'BOGO'] })
+      .set('Accept', 'application/json');
+
+    const updatedOrderSheet = storage.getItemById<OrderSheet>(
+      'orderSheets',
+      orderSheet.getId(),
+    ) as OrderSheet;
+
+    expect(res.status).toBe(204);
+    expect(updatedOrderSheet.toObject()).toEqual(
+      expect.objectContaining({
+        selectedCoupons: ['FIXED5000', 'BOGO'],
+      }),
+    );
+  });
+
   test('장바구니에 없는 상품으로 주문서를 생성하려고 하면 404 에러가 발생한다.', async () => {
     const res = await request(app)
       .post('/api/order-sheets/')
@@ -363,6 +387,19 @@ describe('주문서 API 테스트', () => {
     const res = await request(app)
       .patch('/api/order-sheets/unknown/shipping-area/')
       .send({ isRemoteShippingArea: true })
+      .set('Accept', 'application/json');
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({
+      code: 'RESOURCE_NOT_FOUND',
+      message: '요청한 리소스를 찾을 수 없습니다.',
+    });
+  });
+
+  test('존재하지 않는 주문서의 선택 쿠폰을 수정하려고 하면 404 에러가 발생한다.', async () => {
+    const res = await request(app)
+      .patch('/api/order-sheets/unknown/coupons/')
+      .send({ selectedCoupons: ['FIXED5000'] })
       .set('Accept', 'application/json');
 
     expect(res.status).toBe(404);

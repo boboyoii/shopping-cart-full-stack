@@ -60,6 +60,9 @@ export function createApp({
   router
     .route('/api/order-sheets/:id/shipping-area/')
     .patch(orderSheetController.updateShippingArea);
+  router
+    .route('/api/order-sheets/:id/coupons/')
+    .patch(orderSheetController.updateCoupons);
 
   router.use(
     (

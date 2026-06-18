@@ -11,6 +11,7 @@ export interface OrderSheetController {
   create: express.RequestHandler;
   get: express.RequestHandler<{ id: string }>;
   updateShippingArea: express.RequestHandler<{ id: string }>;
+  updateCoupons: express.RequestHandler<{ id: string }>;
 }
 
 interface CreateOrderSheetRequest {
@@ -22,6 +23,10 @@ interface CreateOrderSheetRequest {
 
 interface UpdateShippingAreaRequest {
   isRemoteShippingArea: boolean;
+}
+
+interface UpdateCouponsRequest {
+  selectedCoupons: string[];
 }
 
 export function createOrderSheetController(
@@ -87,6 +92,24 @@ export function createOrderSheetController(
         }
 
         orderSheet.updateShippingArea(isRemoteShippingArea);
+        storage.updateItemById<OrderSheet>('orderSheets', id, orderSheet);
+
+        res.status(204).send();
+      } catch (err) {
+        next(err);
+      }
+    },
+    updateCoupons: (req, res, next) => {
+      try {
+        const { id } = req.params;
+        const { selectedCoupons }: UpdateCouponsRequest = req.body;
+        const orderSheet = storage.getItemById<OrderSheet>('orderSheets', id);
+
+        if (!orderSheet) {
+          throw new NotFoundError();
+        }
+
+        orderSheet.updateCoupons(selectedCoupons);
         storage.updateItemById<OrderSheet>('orderSheets', id, orderSheet);
 
         res.status(204).send();
