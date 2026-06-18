@@ -47,6 +47,7 @@ export function createCartController(storage: Storage): CartController {
         }
 
         cart.updateItemByProductId(id, quantity);
+        storage.updateItemById<Cart>('cart', USER_ID, cart);
 
         res.status(200).send({ product_id: id, quantity: quantity });
       } catch (err) {
@@ -63,6 +64,7 @@ export function createCartController(storage: Storage): CartController {
         }
 
         cart.deleteItemByProductId(id);
+        storage.updateItemById<Cart>('cart', USER_ID, cart);
 
         res.status(204).send();
       } catch (err) {

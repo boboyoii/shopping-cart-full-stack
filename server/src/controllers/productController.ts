@@ -48,6 +48,7 @@ export function createProductController(storage: Storage): ProductController {
         storage.deleteItemById('products', id);
         const cart = storage.getItemById('cart', USER_ID) as Cart;
         cart.deleteItemByProductId(id);
+        storage.updateItemById<Cart>('cart', USER_ID, cart);
 
         res.status(204).send();
       } catch (err) {
