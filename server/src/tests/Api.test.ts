@@ -265,18 +265,18 @@ describe('주문서 API 테스트', () => {
 
     expect(res.status).toBe(201);
     expect(orderSheet.toObject()).toEqual(
-      expect.objectContaining({
-        userId: USER_ID,
-        items: [{ productId: product1.getId(), quantity: 3 }],
-        selectedCoupons: [],
-        isRemoteShippingArea: false,
-      }),
+        expect.objectContaining({
+          userId: USER_ID,
+          items: [{ product: product1.toObject(), quantity: 3 }],
+          selectedCoupons: [],
+          isRemoteShippingArea: false,
+        }),
     );
   });
 
   test('주문서 ID로 주문서를 조회한다.', async () => {
     const orderSheet = new OrderSheet(USER_ID, [
-      { productId: product1.getId(), quantity: 3 },
+      { product: product1.toObject(), quantity: 3 },
     ]);
     storage.addItemById('orderSheets', orderSheet.getId(), orderSheet);
 

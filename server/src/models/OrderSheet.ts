@@ -1,5 +1,7 @@
+import { ProductType } from './Product.js';
+
 export interface OrderSheetItem {
-  productId: string;
+  product: ProductType;
   quantity: number;
 }
 

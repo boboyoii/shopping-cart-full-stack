@@ -28,17 +28,24 @@ export function createOrderSheetController(
         const { items }: CreateOrderSheetRequest = req.body;
         const cart = storage.getItemById<Cart>('cart', USER_ID) as Cart;
 
-        items.forEach(({ productId }) => {
+        const orderItems = items.map(({ productId, quantity }) => {
           if (!cart.hasItemByProductId(productId)) {
             throw new NotFoundError();
           }
 
-          if (!storage.hasItemById('products', productId)) {
+          const product = storage.getItemById<Product>('products', productId);
+
+          if (!product) {
             throw new NotFoundError();
           }
+
+          return {
+            product: product.toObject(),
+            quantity,
+          };
         });
 
-        const orderSheet = new OrderSheet(USER_ID, items);
+        const orderSheet = new OrderSheet(USER_ID, orderItems);
         storage.addItemById('orderSheets', orderSheet.getId(), orderSheet);
 
         res.status(201).send({ id: orderSheet.getId() });
@@ -55,29 +62,10 @@ export function createOrderSheetController(
           throw new NotFoundError();
         }
 
-        const {
-          userId,
-          items: orderItems,
-          ...orderSheetData
-        } = orderSheet.toObject();
-        const items = orderItems.map(({ productId, quantity }) => {
-          const product = storage.getItemById<Product>('products', productId);
-
-          if (!product) {
-            throw new NotFoundError();
-          }
-
-          return {
-            product: product.toObject(),
-            quantity,
-          };
-        });
+        const { userId, ...orderSheetData } = orderSheet.toObject();
 
         res.status(200).send({
-          orderSheet: {
-            ...orderSheetData,
-            items,
-          },
+          orderSheet: orderSheetData,
         });
       } catch (err) {
         next(err);

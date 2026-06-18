@@ -3,16 +3,48 @@ import OrderSheet from '../models/OrderSheet.js';
 describe('OrderSheet Tests', () => {
   test('주문서 클래스를 객체 형태로 반환한다.', () => {
     const orderSheet = new OrderSheet('user-1', [
-      { productId: 'product-1', quantity: 2 },
-      { productId: 'product-2', quantity: 1 },
+      {
+        product: {
+          id: 'product-1',
+          name: '피자',
+          price: 30000,
+          thumbnail: 'pizza.png',
+        },
+        quantity: 2,
+      },
+      {
+        product: {
+          id: 'product-2',
+          name: '치킨',
+          price: 20000,
+          thumbnail: 'chicken.png',
+        },
+        quantity: 1,
+      },
     ]);
 
     expect(orderSheet.toObject()).toEqual(
       expect.objectContaining({
         userId: 'user-1',
         items: [
-          { productId: 'product-1', quantity: 2 },
-          { productId: 'product-2', quantity: 1 },
+          {
+            product: {
+              id: 'product-1',
+              name: '피자',
+              price: 30000,
+              thumbnail: 'pizza.png',
+            },
+            quantity: 2,
+          },
+          {
+            product: {
+              id: 'product-2',
+              name: '치킨',
+              price: 20000,
+              thumbnail: 'chicken.png',
+            },
+            quantity: 1,
+          },
         ],
         selectedCoupons: [],
         isRemoteShippingArea: false,
