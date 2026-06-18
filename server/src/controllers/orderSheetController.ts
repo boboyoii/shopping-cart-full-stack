@@ -10,6 +10,7 @@ import Product from '../models/Product.js';
 export interface OrderSheetController {
   create: express.RequestHandler;
   get: express.RequestHandler<{ id: string }>;
+  updateShippingArea: express.RequestHandler<{ id: string }>;
 }
 
 interface CreateOrderSheetRequest {
@@ -17,6 +18,10 @@ interface CreateOrderSheetRequest {
     productId: string;
     quantity: number;
   }[];
+}
+
+interface UpdateShippingAreaRequest {
+  isRemoteShippingArea: boolean;
 }
 
 export function createOrderSheetController(
@@ -67,6 +72,24 @@ export function createOrderSheetController(
         res.status(200).send({
           orderSheet: orderSheetData,
         });
+      } catch (err) {
+        next(err);
+      }
+    },
+    updateShippingArea: (req, res, next) => {
+      try {
+        const { id } = req.params;
+        const { isRemoteShippingArea }: UpdateShippingAreaRequest = req.body;
+        const orderSheet = storage.getItemById<OrderSheet>('orderSheets', id);
+
+        if (!orderSheet) {
+          throw new NotFoundError();
+        }
+
+        orderSheet.updateShippingArea(isRemoteShippingArea);
+        storage.updateItemById<OrderSheet>('orderSheets', id, orderSheet);
+
+        res.status(204).send();
       } catch (err) {
         next(err);
       }

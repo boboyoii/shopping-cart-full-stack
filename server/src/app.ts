@@ -57,6 +57,9 @@ export function createApp({
 
   router.route('/api/order-sheets/').post(orderSheetController.create);
   router.route('/api/order-sheets/:id/').get(orderSheetController.get);
+  router
+    .route('/api/order-sheets/:id/shipping-area/')
+    .patch(orderSheetController.updateShippingArea);
 
   router.use(
     (

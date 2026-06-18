@@ -32,6 +32,10 @@ class OrderSheet {
     return this.#id;
   }
 
+  updateShippingArea(isRemoteShippingArea: boolean) {
+    this.#isRemoteShippingArea = isRemoteShippingArea;
+  }
+
   toObject(): OrderSheetType {
     return {
       id: this.#id,

@@ -51,4 +51,26 @@ describe('OrderSheet Tests', () => {
       }),
     );
   });
+
+  test('도서산간 지역 여부를 수정한다.', () => {
+    const orderSheet = new OrderSheet('user-1', [
+      {
+        product: {
+          id: 'product-1',
+          name: '피자',
+          price: 30000,
+          thumbnail: 'pizza.png',
+        },
+        quantity: 2,
+      },
+    ]);
+
+    orderSheet.updateShippingArea(true);
+
+    expect(orderSheet.toObject()).toEqual(
+      expect.objectContaining({
+        isRemoteShippingArea: true,
+      }),
+    );
+  });
 });
