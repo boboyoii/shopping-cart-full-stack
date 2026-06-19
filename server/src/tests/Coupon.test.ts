@@ -1,6 +1,7 @@
 import OrderSheet from '../models/OrderSheet.js';
 import FixedAmountCoupon from '../models/coupons/FixedAmountCoupon.js';
 import { CouponContext } from '../models/coupons/Coupon.js';
+import RateCoupon from '../models/coupons/RateCoupon.js';
 
 const orderSheet = new OrderSheet('user-1', [
   {
@@ -73,5 +74,32 @@ describe('FixedAmountCoupon tests', () => {
     });
 
     expect(coupon.calculateDiscount(createCouponContext())).toBe(5000);
+  });
+});
+
+describe('RateCoupon tests', () => {
+  test('사용 가능한 경우 주문 금액에서 설정한 비율만큼 할인한다.', () => {
+    const coupon = new RateCoupon({
+      code: 'MIRACLESALE',
+      name: '30% 할인 쿠폰',
+      rate: 30,
+      expiresAt: new Date('2026-12-31'),
+    });
+
+    expect(coupon.calculateDiscount(createCouponContext())).toBe(18000);
+  });
+
+  test('사용할 수 없는 경우 할인하지 않는다.', () => {
+    const coupon = new RateCoupon({
+      code: 'MIRACLESALE',
+      name: '30% 할인 쿠폰',
+      rate: 30,
+      expiresAt: new Date('2026-12-31'),
+      conditions: {
+        minimumOrderAmount: 100000,
+      },
+    });
+
+    expect(coupon.calculateDiscount(createCouponContext())).toBe(0);
   });
 });
