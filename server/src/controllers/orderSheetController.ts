@@ -15,7 +15,8 @@ import {
 
 export interface OrderSheetController {
   create: express.RequestHandler;
-  get: express.RequestHandler<{ id: string }>;
+  getOrderSheet: express.RequestHandler<{ id: string }>;
+  getAvailableCoupons: express.RequestHandler<{ id: string }>;
   updateShippingArea: express.RequestHandler<{ id: string }>;
   updateCoupons: express.RequestHandler<{ id: string }>;
 }
@@ -79,7 +80,7 @@ export function createOrderSheetController(
         next(err);
       }
     },
-    get: (req, res, next) => {
+    getOrderSheet: (req, res, next) => {
       try {
         const { id } = req.params;
         const orderSheet = storage.getItemById<OrderSheet>('orderSheets', id);
@@ -92,6 +93,26 @@ export function createOrderSheetController(
 
         res.status(200).send({
           orderSheet: orderSheetData,
+        });
+      } catch (err) {
+        next(err);
+      }
+    },
+    getAvailableCoupons: (req, res, next) => {
+      try {
+        const { id } = req.params;
+        const orderSheet = storage.getItemById<OrderSheet>('orderSheets', id);
+
+        if (!orderSheet) {
+          throw new NotFoundError();
+        }
+
+        const coupons = storage.allItems<BaseCoupon>('coupons');
+        const context = createPricingContext(orderSheet);
+        const availableCoupons = findAvailableCoupons(context, coupons);
+
+        res.status(200).send({
+          couponCodes: availableCoupons.map((coupon) => coupon.getCode()),
         });
       } catch (err) {
         next(err);

@@ -268,12 +268,12 @@ describe('주문서 API 테스트', () => {
 
     expect(res.status).toBe(201);
     expect(orderSheet.toObject()).toEqual(
-        expect.objectContaining({
-          userId: USER_ID,
-          items: [{ product: product1.toObject(), quantity: 3 }],
-          selectedCoupons: [],
-          isRemoteShippingArea: false,
-        }),
+      expect.objectContaining({
+        userId: USER_ID,
+        items: [{ product: product1.toObject(), quantity: 3 }],
+        selectedCoupons: [],
+        isRemoteShippingArea: false,
+      }),
     );
   });
 
@@ -290,7 +290,11 @@ describe('주문서 API 테스트', () => {
       rate: 30,
       expiresAt: new Date('2026-12-31'),
     });
-    storage.addItemById('coupons', fixedAmountCoupon.getId(), fixedAmountCoupon);
+    storage.addItemById(
+      'coupons',
+      fixedAmountCoupon.getId(),
+      fixedAmountCoupon,
+    );
     storage.addItemById('coupons', rateCoupon.getId(), rateCoupon);
 
     const res = await request(app)
@@ -382,6 +386,43 @@ describe('주문서 API 테스트', () => {
     );
   });
 
+  test('주문서에서 사용할 수 있는 쿠폰 코드를 반환한다.', async () => {
+    const orderSheet = new OrderSheet(USER_ID, [
+      { product: product1.toObject(), quantity: 10 },
+    ]);
+    const fixedAmountCoupon = new FixedAmountCoupon({
+      code: 'FIXED5000',
+      name: '5,000원 할인 쿠폰',
+      amount: 5000,
+      expiresAt: new Date('2026-12-31'),
+      conditions: {
+        minimumOrderAmount: 100000,
+      },
+    });
+    const expiredCoupon = new RateCoupon({
+      code: 'MIRACLESALE',
+      name: '30% 할인 쿠폰',
+      rate: 30,
+      expiresAt: new Date('2026-01-01'),
+    });
+    storage.addItemById('orderSheets', orderSheet.getId(), orderSheet);
+    storage.addItemById(
+      'coupons',
+      fixedAmountCoupon.getId(),
+      fixedAmountCoupon,
+    );
+    storage.addItemById('coupons', expiredCoupon.getId(), expiredCoupon);
+
+    const res = await request(app).get(
+      `/api/order-sheets/${orderSheet.getId()}/coupons/`,
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      couponCodes: ['FIXED5000'],
+    });
+  });
+
   test('장바구니에 없는 상품으로 주문서를 생성하려고 하면 404 에러가 발생한다.', async () => {
     const res = await request(app)
       .post('/api/order-sheets/')
@@ -440,6 +481,16 @@ describe('주문서 API 테스트', () => {
       .patch('/api/order-sheets/unknown/coupons/')
       .send({ selectedCoupons: ['FIXED5000'] })
       .set('Accept', 'application/json');
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({
+      code: 'RESOURCE_NOT_FOUND',
+      message: '요청한 리소스를 찾을 수 없습니다.',
+    });
+  });
+
+  test('존재하지 않는 주문서의 사용 가능한 쿠폰 코드를 조회하려고 하면 404 에러가 발생한다.', async () => {
+    const res = await request(app).get('/api/order-sheets/unknown/coupons/');
 
     expect(res.status).toBe(404);
     expect(res.body).toEqual({

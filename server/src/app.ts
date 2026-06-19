@@ -56,13 +56,16 @@ export function createApp({
   });
 
   router.route('/api/order-sheets/').post(orderSheetController.create);
-  router.route('/api/order-sheets/:id/').get(orderSheetController.get);
+  router
+    .route('/api/order-sheets/:id/')
+    .get(orderSheetController.getOrderSheet);
+  router
+    .route('/api/order-sheets/:id/coupons/')
+    .get(orderSheetController.getAvailableCoupons)
+    .patch(orderSheetController.updateCoupons);
   router
     .route('/api/order-sheets/:id/shipping-area/')
     .patch(orderSheetController.updateShippingArea);
-  router
-    .route('/api/order-sheets/:id/coupons/')
-    .patch(orderSheetController.updateCoupons);
 
   router.use(
     (
