@@ -17,7 +17,7 @@ const orderSheet = new OrderSheet('user-1', [
   },
 ]);
 
-const createCouponContext = (
+const createTestCouponContext = (
   overrides: Partial<CouponContext> = {},
 ): CouponContext => ({
   orderSheet,
@@ -39,7 +39,7 @@ describe('FixedAmountCoupon tests', () => {
       },
     });
 
-    expect(coupon.canApply(createCouponContext())).toBe(true);
+    expect(coupon.canApply(createTestCouponContext())).toBe(true);
   });
 
   test('최소 주문 금액을 만족하지 않으면 쿠폰을 사용할 수 없다.', () => {
@@ -53,7 +53,7 @@ describe('FixedAmountCoupon tests', () => {
       },
     });
 
-    expect(coupon.canApply(createCouponContext())).toBe(false);
+    expect(coupon.canApply(createTestCouponContext())).toBe(false);
   });
 
   test('만료된 쿠폰은 사용할 수 없다.', () => {
@@ -64,7 +64,7 @@ describe('FixedAmountCoupon tests', () => {
       expiresAt: new Date('2026-01-01'),
     });
 
-    expect(coupon.canApply(createCouponContext())).toBe(false);
+    expect(coupon.canApply(createTestCouponContext())).toBe(false);
   });
 
   test('사용 가능한 경우 설정한 금액만큼 할인한다.', () => {
@@ -75,7 +75,7 @@ describe('FixedAmountCoupon tests', () => {
       expiresAt: new Date('2026-12-31'),
     });
 
-    expect(coupon.calculateDiscount(createCouponContext())).toBe(5000);
+    expect(coupon.calculateDiscount(createTestCouponContext())).toBe(5000);
   });
 });
 
@@ -88,7 +88,7 @@ describe('RateCoupon tests', () => {
       expiresAt: new Date('2026-12-31'),
     });
 
-    expect(coupon.calculateDiscount(createCouponContext())).toBe(18000);
+    expect(coupon.calculateDiscount(createTestCouponContext())).toBe(18000);
   });
 
   test('사용할 수 없는 경우 할인하지 않는다.', () => {
@@ -102,7 +102,7 @@ describe('RateCoupon tests', () => {
       },
     });
 
-    expect(coupon.calculateDiscount(createCouponContext())).toBe(0);
+    expect(coupon.calculateDiscount(createTestCouponContext())).toBe(0);
   });
 });
 
@@ -114,7 +114,7 @@ describe('FreeShippingCoupon tests', () => {
       expiresAt: new Date('2026-12-31'),
     });
 
-    expect(coupon.canApply(createCouponContext())).toBe(true);
+    expect(coupon.canApply(createTestCouponContext())).toBe(true);
   });
 
   test('배송비만큼 할인한다.', () => {
@@ -124,7 +124,7 @@ describe('FreeShippingCoupon tests', () => {
       expiresAt: new Date('2026-12-31'),
     });
 
-    expect(coupon.calculateDiscount(createCouponContext())).toBe(3000);
+    expect(coupon.calculateDiscount(createTestCouponContext())).toBe(3000);
   });
 
   test('배송비가 없으면 쿠폰을 사용할 수 없다.', () => {
@@ -134,7 +134,7 @@ describe('FreeShippingCoupon tests', () => {
       expiresAt: new Date('2026-12-31'),
     });
 
-    expect(coupon.canApply(createCouponContext({ shippingFee: 0 }))).toBe(
+    expect(coupon.canApply(createTestCouponContext({ shippingFee: 0 }))).toBe(
       false,
     );
   });
@@ -162,10 +162,10 @@ describe('BuyNGetMCoupon tests', () => {
     },
   ]);
 
-  const createBuyNGetMContext = (
+  const createBuyNGetMCouponContext = (
     overrides: Partial<CouponContext> = {},
   ): CouponContext =>
-    createCouponContext({
+    createTestCouponContext({
       orderSheet: buyNGetMOrderSheet,
       orderAmount: 170000,
       ...overrides,
@@ -180,7 +180,7 @@ describe('BuyNGetMCoupon tests', () => {
       expiresAt: new Date('2026-12-31'),
     });
 
-    expect(coupon.canApply(createBuyNGetMContext())).toBe(true);
+    expect(coupon.canApply(createBuyNGetMCouponContext())).toBe(true);
   });
 
   test('필요한 수량을 만족하지 않으면 쿠폰을 사용할 수 없다.', () => {
@@ -192,7 +192,7 @@ describe('BuyNGetMCoupon tests', () => {
       expiresAt: new Date('2026-12-31'),
     });
 
-    expect(coupon.canApply(createBuyNGetMContext())).toBe(false);
+    expect(coupon.canApply(createBuyNGetMCouponContext())).toBe(false);
   });
 
   test('대상 상품 중 가장 비싼 상품 가격만큼 할인한다.', () => {
@@ -204,6 +204,6 @@ describe('BuyNGetMCoupon tests', () => {
       expiresAt: new Date('2026-12-31'),
     });
 
-    expect(coupon.calculateDiscount(createBuyNGetMContext())).toBe(30000);
+    expect(coupon.calculateDiscount(createBuyNGetMCouponContext())).toBe(30000);
   });
 });
