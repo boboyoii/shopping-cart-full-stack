@@ -1,4 +1,5 @@
 import OrderSheet from '../models/OrderSheet.js';
+import BuyNGetMCoupon from '../models/coupons/BuyNGetMCoupon.js';
 import FixedAmountCoupon from '../models/coupons/FixedAmountCoupon.js';
 import FreeShippingCoupon from '../models/coupons/FreeShippingCoupon.js';
 import { CouponContext } from '../models/coupons/Coupon.js';
@@ -136,5 +137,73 @@ describe('FreeShippingCoupon tests', () => {
     expect(coupon.canApply(createCouponContext({ shippingFee: 0 }))).toBe(
       false,
     );
+  });
+});
+
+describe('BuyNGetMCoupon tests', () => {
+  const buyNGetMOrderSheet = new OrderSheet('user-1', [
+    {
+      product: {
+        id: 'product-1',
+        name: '피자',
+        price: 30000,
+        thumbnail: 'pizza.png',
+      },
+      quantity: 3,
+    },
+    {
+      product: {
+        id: 'product-2',
+        name: '치킨',
+        price: 20000,
+        thumbnail: 'chicken.png',
+      },
+      quantity: 4,
+    },
+  ]);
+
+  const createBuyNGetMContext = (
+    overrides: Partial<CouponContext> = {},
+  ): CouponContext =>
+    createCouponContext({
+      orderSheet: buyNGetMOrderSheet,
+      orderAmount: 170000,
+      ...overrides,
+    });
+
+  test('필요한 수량을 만족하면 쿠폰을 사용할 수 있다.', () => {
+    const coupon = new BuyNGetMCoupon({
+      code: 'BOGO',
+      name: '2+1 쿠폰',
+      buyQuantity: 2,
+      freeQuantity: 1,
+      expiresAt: new Date('2026-12-31'),
+    });
+
+    expect(coupon.canApply(createBuyNGetMContext())).toBe(true);
+  });
+
+  test('필요한 수량을 만족하지 않으면 쿠폰을 사용할 수 없다.', () => {
+    const coupon = new BuyNGetMCoupon({
+      code: 'BOGO',
+      name: '2+1 쿠폰',
+      buyQuantity: 4,
+      freeQuantity: 1,
+      expiresAt: new Date('2026-12-31'),
+    });
+
+    expect(coupon.canApply(createBuyNGetMContext())).toBe(false);
+  });
+
+  test('대상 상품 중 가장 비싼 상품 가격만큼 할인한다.', () => {
+    const coupon = new BuyNGetMCoupon({
+      code: 'BOGO',
+      name: '2+1 쿠폰',
+      buyQuantity: 2,
+      freeQuantity: 1,
+      expiresAt: new Date('2026-12-31'),
+    });
+
+    expect(coupon.calculateDiscount(createBuyNGetMContext())).toBe(30000);
   });
 });
