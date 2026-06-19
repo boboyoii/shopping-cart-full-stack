@@ -59,7 +59,7 @@ describe('주문서 API 테스트', () => {
       expect.objectContaining({
         userId: USER_ID,
         items: [{ product: product1.toObject(), quantity: 3 }],
-        selectedCoupons: [],
+        selectedCouponIds: [],
         isRemoteShippingArea: false,
       }),
     );
@@ -100,7 +100,7 @@ describe('주문서 API 테스트', () => {
     expect(res.status).toBe(201);
     expect(orderSheet.toObject()).toEqual(
       expect.objectContaining({
-        selectedCoupons: [fixedAmountCoupon.getId(), rateCoupon.getId()],
+        selectedCouponIds: [fixedAmountCoupon.getId(), rateCoupon.getId()],
       }),
     );
   });
@@ -121,7 +121,7 @@ describe('주문서 API 테스트', () => {
         id: orderSheet.getId(),
         items: [{ product: product1.toObject(), quantity: 3 }],
         isRemoteShippingArea: false,
-        selectedCoupons: [],
+        selectedCouponIds: [],
       },
     });
   });
@@ -158,7 +158,7 @@ describe('주문서 API 테스트', () => {
 
     const res = await request(app)
       .patch(`/api/order-sheets/${orderSheet.getId()}/coupons/`)
-      .send({ selectedCoupons: ['FIXED5000', 'BOGO'] })
+      .send({ selectedCouponIds: ['coupon-1', 'coupon-2'] })
       .set('Accept', 'application/json');
 
     const updatedOrderSheet = storage.getItemById<OrderSheet>(
@@ -169,12 +169,12 @@ describe('주문서 API 테스트', () => {
     expect(res.status).toBe(204);
     expect(updatedOrderSheet.toObject()).toEqual(
       expect.objectContaining({
-        selectedCoupons: ['FIXED5000', 'BOGO'],
+        selectedCouponIds: ['coupon-1', 'coupon-2'],
       }),
     );
   });
 
-  test('주문서에서 사용할 수 있는 쿠폰 코드를 반환한다.', async () => {
+  test('주문서에서 사용할 수 있는 쿠폰 정보를 반환한다.', async () => {
     const orderSheet = new OrderSheet(USER_ID, [
       { product: product1.toObject(), quantity: 10 },
     ]);
@@ -207,7 +207,12 @@ describe('주문서 API 테스트', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
-      couponCodes: ['FIXED5000'],
+      coupons: [
+        {
+          id: fixedAmountCoupon.getId(),
+          code: 'FIXED5000',
+        },
+      ],
     });
   });
 
@@ -267,7 +272,7 @@ describe('주문서 API 테스트', () => {
   test('존재하지 않는 주문서의 선택 쿠폰을 수정하려고 하면 404 에러가 발생한다.', async () => {
     const res = await request(app)
       .patch('/api/order-sheets/unknown/coupons/')
-      .send({ selectedCoupons: ['FIXED5000'] })
+      .send({ selectedCouponIds: ['coupon-1'] })
       .set('Accept', 'application/json');
 
     expect(res.status).toBe(404);
@@ -277,7 +282,7 @@ describe('주문서 API 테스트', () => {
     });
   });
 
-  test('존재하지 않는 주문서의 사용 가능한 쿠폰 코드를 조회하려고 하면 404 에러가 발생한다.', async () => {
+  test('존재하지 않는 주문서의 사용 가능한 쿠폰을 조회하려고 하면 404 에러가 발생한다.', async () => {
     const res = await request(app).get('/api/order-sheets/unknown/coupons/');
 
     expect(res.status).toBe(404);

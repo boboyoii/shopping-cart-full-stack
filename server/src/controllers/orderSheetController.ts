@@ -33,7 +33,7 @@ interface UpdateShippingAreaRequest {
 }
 
 interface UpdateCouponsRequest {
-  selectedCoupons: string[];
+  selectedCouponIds: string[];
 }
 
 export function createOrderSheetController(
@@ -72,7 +72,7 @@ export function createOrderSheetController(
           availableCoupons,
         );
 
-        orderSheet.updateCoupons(bestCoupons.map((coupon) => coupon.getId()));
+        orderSheet.updateCouponIds(bestCoupons.map((coupon) => coupon.getId()));
         storage.addItemById('orderSheets', orderSheet.getId(), orderSheet);
 
         res.status(201).send({ id: orderSheet.getId() });
@@ -112,7 +112,10 @@ export function createOrderSheetController(
         const availableCoupons = findAvailableCoupons(context, coupons);
 
         res.status(200).send({
-          couponCodes: availableCoupons.map((coupon) => coupon.getCode()),
+          coupons: availableCoupons.map((coupon) => {
+            const { id, code } = coupon.toObject();
+            return { id, code };
+          }),
         });
       } catch (err) {
         next(err);
@@ -139,14 +142,14 @@ export function createOrderSheetController(
     updateCoupons: (req, res, next) => {
       try {
         const { id } = req.params;
-        const { selectedCoupons }: UpdateCouponsRequest = req.body;
+        const { selectedCouponIds }: UpdateCouponsRequest = req.body;
         const orderSheet = storage.getItemById<OrderSheet>('orderSheets', id);
 
         if (!orderSheet) {
           throw new NotFoundError();
         }
 
-        orderSheet.updateCoupons(selectedCoupons);
+        orderSheet.updateCouponIds(selectedCouponIds);
         storage.updateItemById<OrderSheet>('orderSheets', id, orderSheet);
 
         res.status(204).send();

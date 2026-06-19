@@ -46,7 +46,7 @@ describe('OrderSheet Tests', () => {
             quantity: 1,
           },
         ],
-        selectedCoupons: [],
+        selectedCouponIds: [],
         isRemoteShippingArea: false,
       }),
     );
@@ -87,11 +87,11 @@ describe('OrderSheet Tests', () => {
       },
     ]);
 
-    orderSheet.updateCoupons(['FIXED5000', 'BOGO']);
+    orderSheet.updateCouponIds(['coupon-1', 'coupon-2']);
 
     expect(orderSheet.toObject()).toEqual(
       expect.objectContaining({
-        selectedCoupons: ['FIXED5000', 'BOGO'],
+        selectedCouponIds: ['coupon-1', 'coupon-2'],
       }),
     );
   });
