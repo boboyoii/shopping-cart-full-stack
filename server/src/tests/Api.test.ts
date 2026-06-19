@@ -10,6 +10,8 @@ import { ProductType } from '../models/Product.js';
 import { USER_ID } from '../constanst.js';
 import { createOrderSheetController } from '../controllers/orderSheetController.js';
 import OrderSheet from '../models/OrderSheet.js';
+import FixedAmountCoupon from '../models/coupons/FixedAmountCoupon.js';
+import RateCoupon from '../models/coupons/RateCoupon.js';
 
 describe('프로덕트 API 테스트', () => {
   const storage = new InMemoryStorage();
@@ -246,6 +248,7 @@ describe('주문서 API 테스트', () => {
   afterEach(() => {
     storage.clearAllItems('products');
     storage.clearAllItems('orderSheets');
+    storage.clearAllItems('coupons');
     cart.deleteItemByProductId(product1.getId());
     cart.deleteItemByProductId(product2.getId());
   });
@@ -271,6 +274,42 @@ describe('주문서 API 테스트', () => {
           selectedCoupons: [],
           isRemoteShippingArea: false,
         }),
+    );
+  });
+
+  test('주문서를 생성할 때 최적 쿠폰 조합을 선택한다.', async () => {
+    const fixedAmountCoupon = new FixedAmountCoupon({
+      code: 'FIXED5000',
+      name: '5,000원 할인 쿠폰',
+      amount: 5000,
+      expiresAt: new Date('2026-12-31'),
+    });
+    const rateCoupon = new RateCoupon({
+      code: 'MIRACLESALE',
+      name: '30% 할인 쿠폰',
+      rate: 30,
+      expiresAt: new Date('2026-12-31'),
+    });
+    storage.addItemById('coupons', fixedAmountCoupon.getId(), fixedAmountCoupon);
+    storage.addItemById('coupons', rateCoupon.getId(), rateCoupon);
+
+    const res = await request(app)
+      .post('/api/order-sheets/')
+      .send({
+        items: [{ productId: product1.getId(), quantity: 3 }],
+      })
+      .set('Accept', 'application/json');
+
+    const orderSheet = storage.getItemById(
+      'orderSheets',
+      res.body.id,
+    ) as OrderSheet;
+
+    expect(res.status).toBe(201);
+    expect(orderSheet.toObject()).toEqual(
+      expect.objectContaining({
+        selectedCoupons: [fixedAmountCoupon.getId(), rateCoupon.getId()],
+      }),
     );
   });
 

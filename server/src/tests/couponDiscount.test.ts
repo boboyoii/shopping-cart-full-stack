@@ -3,6 +3,7 @@ import FixedAmountCoupon from '../models/coupons/FixedAmountCoupon.js';
 import RateCoupon from '../models/coupons/RateCoupon.js';
 import {
   calculateCouponDiscount,
+  findAvailableCoupons,
   findBestCouponCombination,
 } from '../services/couponDiscount.js';
 import { createPricingContext } from '../services/orderSheetPricing.js';
@@ -84,10 +85,12 @@ describe('couponDiscount tests', () => {
       expiresAt: new Date('2026-12-31'),
     });
 
-    const bestCoupons = findBestCouponCombination(
-      createPricingContext(orderSheet),
-      [unavailableCoupon, rateCoupon],
-    );
+    const context = createPricingContext(orderSheet);
+    const availableCoupons = findAvailableCoupons(context, [
+      unavailableCoupon,
+      rateCoupon,
+    ]);
+    const bestCoupons = findBestCouponCombination(context, availableCoupons);
 
     expect(bestCoupons).toEqual([rateCoupon]);
   });

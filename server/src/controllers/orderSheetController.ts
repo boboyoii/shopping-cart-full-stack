@@ -6,6 +6,12 @@ import Cart from '../models/Cart.js';
 import { Storage } from '../storages/Storage.js';
 import OrderSheet from '../models/OrderSheet.js';
 import Product from '../models/Product.js';
+import BaseCoupon from '../models/coupons/Coupon.js';
+import { createPricingContext } from '../services/orderSheetPricing.js';
+import {
+  findAvailableCoupons,
+  findBestCouponCombination,
+} from '../services/couponDiscount.js';
 
 export interface OrderSheetController {
   create: express.RequestHandler;
@@ -56,6 +62,16 @@ export function createOrderSheetController(
         });
 
         const orderSheet = new OrderSheet(USER_ID, orderItems);
+
+        const coupons = storage.allItems<BaseCoupon>('coupons');
+        const context = createPricingContext(orderSheet);
+        const availableCoupons = findAvailableCoupons(context, coupons);
+        const bestCoupons = findBestCouponCombination(
+          context,
+          availableCoupons,
+        );
+
+        orderSheet.updateCoupons(bestCoupons.map((coupon) => coupon.getId()));
         storage.addItemById('orderSheets', orderSheet.getId(), orderSheet);
 
         res.status(201).send({ id: orderSheet.getId() });
