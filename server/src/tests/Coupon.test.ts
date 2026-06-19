@@ -1,5 +1,6 @@
 import OrderSheet from '../models/OrderSheet.js';
 import FixedAmountCoupon from '../models/coupons/FixedAmountCoupon.js';
+import FreeShippingCoupon from '../models/coupons/FreeShippingCoupon.js';
 import { CouponContext } from '../models/coupons/Coupon.js';
 import RateCoupon from '../models/coupons/RateCoupon.js';
 
@@ -101,5 +102,39 @@ describe('RateCoupon tests', () => {
     });
 
     expect(coupon.calculateDiscount(createCouponContext())).toBe(0);
+  });
+});
+
+describe('FreeShippingCoupon tests', () => {
+  test('배송비가 있으면 쿠폰을 사용할 수 있다.', () => {
+    const coupon = new FreeShippingCoupon({
+      code: 'FREESHIPPING',
+      name: '무료 배송 쿠폰',
+      expiresAt: new Date('2026-12-31'),
+    });
+
+    expect(coupon.canApply(createCouponContext())).toBe(true);
+  });
+
+  test('배송비만큼 할인한다.', () => {
+    const coupon = new FreeShippingCoupon({
+      code: 'FREESHIPPING',
+      name: '무료 배송 쿠폰',
+      expiresAt: new Date('2026-12-31'),
+    });
+
+    expect(coupon.calculateDiscount(createCouponContext())).toBe(3000);
+  });
+
+  test('배송비가 없으면 쿠폰을 사용할 수 없다.', () => {
+    const coupon = new FreeShippingCoupon({
+      code: 'FREESHIPPING',
+      name: '무료 배송 쿠폰',
+      expiresAt: new Date('2026-12-31'),
+    });
+
+    expect(coupon.canApply(createCouponContext({ shippingFee: 0 }))).toBe(
+      false,
+    );
   });
 });
