@@ -33,3 +33,16 @@ export function calculateOrderAmount(orderSheet: OrderSheet) {
 export function calculateShippingFee(orderAmount: number) {
   return orderAmount >= FREE_SHIPPING_THRESHOLD ? 0 : DEFAULT_SHIPPING_FEE;
 }
+
+export function createPricingSummary(
+  context: CouponContext,
+  discountAmount: number,
+): OrderSheetPricingSummary {
+  return {
+    orderAmount: context.orderAmount,
+    shippingFee: context.shippingFee,
+    discountAmount,
+    totalPaymentAmount:
+      context.orderAmount + context.shippingFee - discountAmount,
+  };
+}
