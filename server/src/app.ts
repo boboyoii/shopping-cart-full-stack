@@ -64,6 +64,9 @@ export function createApp({
     .get(orderSheetController.getAvailableCoupons)
     .patch(orderSheetController.updateCoupons);
   router
+    .route('/api/order-sheets/:id/discount-preview/')
+    .post(orderSheetController.previewDiscount);
+  router
     .route('/api/order-sheets/:id/shipping-area/')
     .patch(orderSheetController.updateShippingArea);
 

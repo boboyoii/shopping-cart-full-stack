@@ -9,6 +9,7 @@ import Product from '../models/Product.js';
 import BaseCoupon from '../models/coupons/Coupon.js';
 import { createPricingContext } from '../services/orderSheetPricing.js';
 import {
+  calculateCouponDiscount,
   findAvailableCoupons,
   findBestCouponCombination,
 } from '../services/couponDiscount.js';
@@ -17,6 +18,7 @@ export interface OrderSheetController {
   create: express.RequestHandler;
   getOrderSheet: express.RequestHandler<{ id: string }>;
   getAvailableCoupons: express.RequestHandler<{ id: string }>;
+  previewDiscount: express.RequestHandler<{ id: string }>;
   updateShippingArea: express.RequestHandler<{ id: string }>;
   updateCoupons: express.RequestHandler<{ id: string }>;
 }
@@ -33,6 +35,10 @@ interface UpdateShippingAreaRequest {
 }
 
 interface UpdateCouponsRequest {
+  selectedCouponIds: string[];
+}
+
+interface PreviewDiscountRequest {
   selectedCouponIds: string[];
 }
 
@@ -117,6 +123,37 @@ export function createOrderSheetController(
             return { id, code };
           }),
         });
+      } catch (err) {
+        next(err);
+      }
+    },
+    previewDiscount: (req, res, next) => {
+      try {
+        const { id } = req.params;
+        const { selectedCouponIds }: PreviewDiscountRequest = req.body;
+        const orderSheet = storage.getItemById<OrderSheet>('orderSheets', id);
+
+        if (!orderSheet) {
+          throw new NotFoundError();
+        }
+
+        const selectedCoupons = selectedCouponIds.map((couponId) => {
+          const coupon = storage.getItemById<BaseCoupon>('coupons', couponId);
+
+          if (!coupon) {
+            throw new NotFoundError();
+          }
+
+          return coupon;
+        });
+
+        const context = createPricingContext(orderSheet);
+        const discountAmount = calculateCouponDiscount(
+          context,
+          selectedCoupons,
+        );
+
+        res.status(200).send({ discountAmount });
       } catch (err) {
         next(err);
       }

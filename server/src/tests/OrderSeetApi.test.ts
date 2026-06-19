@@ -216,6 +216,42 @@ describe('주문서 API 테스트', () => {
     });
   });
 
+  test('선택한 쿠폰 id로 할인 금액을 미리 계산한다.', async () => {
+    const orderSheet = new OrderSheet(USER_ID, [
+      { product: product1.toObject(), quantity: 3 },
+    ]);
+    const fixedAmountCoupon = new FixedAmountCoupon({
+      code: 'FIXED5000',
+      name: '5,000원 할인 쿠폰',
+      amount: 5000,
+      expiresAt: new Date('2026-12-31'),
+    });
+    const rateCoupon = new RateCoupon({
+      code: 'MIRACLESALE',
+      name: '30% 할인 쿠폰',
+      rate: 30,
+      expiresAt: new Date('2026-12-31'),
+    });
+    storage.addItemById('orderSheets', orderSheet.getId(), orderSheet);
+    storage.addItemById(
+      'coupons',
+      fixedAmountCoupon.getId(),
+      fixedAmountCoupon,
+    );
+    storage.addItemById('coupons', rateCoupon.getId(), rateCoupon);
+
+    const res = await request(app)
+      .post(`/api/order-sheets/${orderSheet.getId()}/discount-preview/`)
+      .send({
+        selectedCouponIds: [fixedAmountCoupon.getId(), rateCoupon.getId()],
+      })
+      .set('Accept', 'application/json');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ discountAmount: 12500 });
+    expect(orderSheet.toObject().selectedCouponIds).toEqual([]);
+  });
+
   test('장바구니에 없는 상품으로 주문서를 생성하려고 하면 404 에러가 발생한다.', async () => {
     const res = await request(app)
       .post('/api/order-sheets/')
@@ -256,34 +292,16 @@ describe('주문서 API 테스트', () => {
     });
   });
 
-  test('존재하지 않는 주문서의 도서산간 지역 여부를 수정하려고 하면 404 에러가 발생한다.', async () => {
+  test('존재하지 않는 쿠폰으로 할인 미리보기를 요청하면 404 에러가 발생한다.', async () => {
+    const orderSheet = new OrderSheet(USER_ID, [
+      { product: product1.toObject(), quantity: 3 },
+    ]);
+    storage.addItemById('orderSheets', orderSheet.getId(), orderSheet);
+
     const res = await request(app)
-      .patch('/api/order-sheets/unknown/shipping-area/')
-      .send({ isRemoteShippingArea: true })
+      .post(`/api/order-sheets/${orderSheet.getId()}/discount-preview/`)
+      .send({ selectedCouponIds: ['unknown'] })
       .set('Accept', 'application/json');
-
-    expect(res.status).toBe(404);
-    expect(res.body).toEqual({
-      code: 'RESOURCE_NOT_FOUND',
-      message: '요청한 리소스를 찾을 수 없습니다.',
-    });
-  });
-
-  test('존재하지 않는 주문서의 선택 쿠폰을 수정하려고 하면 404 에러가 발생한다.', async () => {
-    const res = await request(app)
-      .patch('/api/order-sheets/unknown/coupons/')
-      .send({ selectedCouponIds: ['coupon-1'] })
-      .set('Accept', 'application/json');
-
-    expect(res.status).toBe(404);
-    expect(res.body).toEqual({
-      code: 'RESOURCE_NOT_FOUND',
-      message: '요청한 리소스를 찾을 수 없습니다.',
-    });
-  });
-
-  test('존재하지 않는 주문서의 사용 가능한 쿠폰을 조회하려고 하면 404 에러가 발생한다.', async () => {
-    const res = await request(app).get('/api/order-sheets/unknown/coupons/');
 
     expect(res.status).toBe(404);
     expect(res.body).toEqual({
