@@ -12,7 +12,11 @@ import CartItemRow from './components/CartItemRow';
 import CartContent from './components/CartContent';
 import { localSelectionStorage } from '../repositories/localSelectionStorage';
 import { createOrderSheet } from '../apis/orderSheet';
-import { ContentDescription, PageTitle } from '../components/Typography';
+import {
+  ContentDescription,
+  Notice,
+  PageTitle,
+} from '../components/Typography';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -118,11 +122,12 @@ const CartPage = () => {
               onRemoveClick={() => handleCartItemRemove(product.id)}
             />
           ))}
-
-          <ShippingNotice>
-            <NoticeIcon />총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.
-          </ShippingNotice>
         </CartItemsSection>
+
+        <NoticeSection>
+          <NoticeIcon />
+          <Notice>총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.</Notice>
+        </NoticeSection>
 
         <CartSummarySection aria-label="주문 금액 요약">
           <CartSummaryRow label="주문 금액" amount={orderAmount} />
@@ -159,13 +164,11 @@ const SelectAllControl = styled.div`
   padding-block: 0.75rem;
 `;
 
-const ShippingNotice = styled.p`
+const NoticeSection = styled.div`
   display: flex;
   align-items: center;
   gap: 0.25rem;
   margin: 0.5rem 0;
-  font-weight: 500;
-  font-size: 0.75rem;
 `;
 
 const CartSummarySection = styled.section`
