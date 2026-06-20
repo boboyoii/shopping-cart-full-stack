@@ -5,6 +5,8 @@ import PageLayout from '../components/PageLayout';
 import BackIcon from '../Icons/BackIcon';
 import Button from '../components/Button';
 import { getOrderSheet, type OrderSheet } from '../apis/orderSheet';
+import { ContentDescription, PageTitle } from '../components/Typography';
+import OrderItem from './components/OrderItem';
 
 const OrderConfirmPage = () => {
   const { orderSheetId } = useParams();
@@ -21,8 +23,13 @@ const OrderConfirmPage = () => {
       console.log(fetchedOrderSheet);
     };
 
-    void fetchOrderSheet();
+    fetchOrderSheet();
   }, [orderSheetId]);
+
+  const productTypeCount = orderSheet?.items.length ?? 0;
+
+  const productQuantity =
+    orderSheet?.items.reduce((total, item) => total + item.quantity, 0) ?? 0;
 
   return (
     <PageLayout
@@ -36,7 +43,27 @@ const OrderConfirmPage = () => {
         </BackButton>
       }
     >
-      <Title>주문 확인</Title>
+      <PageTitle>주문 확인</PageTitle>
+
+      {orderSheet && (
+        <>
+          <ContentDescription>
+            총 {productTypeCount}종류의 상품 {productQuantity}개를 주문합니다.
+            <br />
+            최종 결제 금액을 확인해 주세요.
+          </ContentDescription>
+
+          {orderSheet.items.map(({ product, quantity }) => (
+            <OrderItem
+              key={product.id}
+              name={product.name}
+              thumbnail={product.thumbnail}
+              price={product.price}
+              quantity={quantity}
+            />
+          ))}
+        </>
+      )}
 
       <BottomButtonWrapper>
         <Button fullWidth>결제하기</Button>
@@ -51,12 +78,6 @@ const BackButton = styled.button`
   border: none;
   background: none;
   cursor: pointer;
-`;
-
-const Title = styled.h2`
-  margin: 0;
-  font-weight: 700;
-  font-size: 1.5rem;
 `;
 
 const BottomButtonWrapper = styled.div`
