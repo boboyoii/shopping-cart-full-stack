@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import CartPage from './cart/CartPage';
 import OrderConfirmPage from './order/OrderConfirmPage';
+import PaymentAmountPage from './payment/PaymentAmountPage';
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<CartPage />} />
         <Route path="/order-confirm" element={<OrderConfirmPage />} />
+        <Route path="/payment-amount" element={<PaymentAmountPage />} />
       </Routes>
     </BrowserRouter>
   );

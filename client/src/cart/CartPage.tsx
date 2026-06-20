@@ -74,7 +74,7 @@ const CartPage = () => {
         quantity,
       }));
 
-    navigate('/order-confirm', { state: { orderItems, shippingFee } });
+    navigate('/payment-amount', { state: { orderItems, shippingFee } });
   };
 
   const isCartEmpty = cartItems.length === 0;
