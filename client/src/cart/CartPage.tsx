@@ -12,6 +12,7 @@ import CartItemRow from './components/CartItemRow';
 import CartContent from './components/CartContent';
 import { localSelectionStorage } from '../repositories/localSelectionStorage';
 import { createOrderSheet } from '../apis/orderSheet';
+import { ContentDescription, PageTitle } from '../components/Typography';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -88,13 +89,13 @@ const CartPage = () => {
 
   return (
     <PageLayout headerContent={<Logo>SHOP</Logo>}>
-      <Title>장바구니</Title>
+      <PageTitle>장바구니</PageTitle>
 
       <CartContent isLoading={isLoading} error={error} isEmpty={isCartEmpty}>
         <CartItemsSection aria-label="장바구니 상품">
-          <ItemCountDescription>
+          <ContentDescription>
             현재 {cartItems.length}종류의 상품이 담겨있습니다.
-          </ItemCountDescription>
+          </ContentDescription>
 
           <SelectAllControl>
             <CheckBox
@@ -152,19 +153,7 @@ const Logo = styled.h1`
   color: #ffffff;
 `;
 
-const Title = styled.h2`
-  font-weight: 700;
-  font-size: 1.5rem;
-  margin: 0;
-`;
-
 const CartItemsSection = styled.section``;
-
-const ItemCountDescription = styled.p`
-  margin: 0.5rem 0;
-  font-weight: 500;
-  font-size: 0.75rem;
-`;
 
 const SelectAllControl = styled.div`
   padding-block: 0.75rem;
