@@ -12,6 +12,7 @@ import { calCartSummary } from './utils/calculateCartSummary';
 import CartItemRow from './components/CartItemRow';
 import CartContent from './components/CartContent';
 import { localSelectionStorage } from '../repositories/localSelectionStorage';
+import { createOrderSheet } from '../apis/orderSheet';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -63,7 +64,7 @@ const CartPage = () => {
     }
   };
 
-  const handleOrderConfirm = () => {
+  const handleOrderConfirm = async () => {
     const orderItems: OrderItem[] = cartItems
       .filter(({ product }) => selectedProductIds.includes(product.id))
       .map(({ product, quantity }) => ({
@@ -74,7 +75,21 @@ const CartPage = () => {
         quantity,
       }));
 
-    navigate('/payment-amount', { state: { orderItems, shippingFee } });
+    try {
+      const { id: orderSheetId } = await createOrderSheet(
+        orderItems.map(({ productId, quantity }) => ({ productId, quantity })),
+      );
+
+      navigate('/order-confirm', {
+        state: { orderSheetId },
+      });
+    } catch {
+      alert(
+        error instanceof Error
+          ? error.message
+          : '주문 정보를 준비하지 못했습니다. 다시 시도해 주세요.',
+      );
+    }
   };
 
   const isCartEmpty = cartItems.length === 0;
