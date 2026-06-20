@@ -286,10 +286,12 @@ describe('주문서 API 테스트', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
-      orderAmount: 30000,
-      shippingFee: 3000,
-      discountAmount: 12500,
-      totalPaymentAmount: 20500,
+      pricing: {
+        orderAmount: 30000,
+        shippingFee: 3000,
+        discountAmount: 12500,
+        totalPaymentAmount: 20500,
+      },
     });
   });
 

@@ -156,7 +156,9 @@ export function createOrderSheetController(
           selectedCoupons,
         );
 
-        res.status(200).send(createPricingSummary(context, discountAmount));
+        res.status(200).send({
+          pricing: createPricingSummary(context, discountAmount),
+        });
       } catch (err) {
         next(err);
       }
