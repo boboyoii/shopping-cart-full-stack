@@ -77,3 +77,23 @@ export const getOrderSheetPricing = async (
 
   return data.pricing;
 };
+
+export const updateShippingArea = async (
+  orderSheetId: string,
+  isRemoteShippingArea: boolean,
+): Promise<void> => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/order-sheets/${orderSheetId}/shipping-area/`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ isRemoteShippingArea }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error('배송 정보를 변경하지 못했습니다.');
+  }
+};

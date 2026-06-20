@@ -8,6 +8,7 @@ export const useOrderSheetPricing = (orderSheetId: string | undefined) => {
   const [pricing, setPricing] = useState<OrderSheetPricing | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [fetchVersion, setFetchVersion] = useState(0);
 
   useEffect(() => {
     if (!orderSheetId) return;
@@ -29,7 +30,13 @@ export const useOrderSheetPricing = (orderSheetId: string | undefined) => {
     };
 
     fetchOrderSheetPricing();
-  }, [orderSheetId]);
+  }, [orderSheetId, fetchVersion]);
 
-  return { pricing, isLoading, error };
+  const refetch = () => {
+    setIsLoading(true);
+    setError(null);
+    setFetchVersion((version) => version + 1);
+  };
+
+  return { pricing, isLoading, error, refetch };
 };

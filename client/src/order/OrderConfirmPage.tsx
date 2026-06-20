@@ -14,16 +14,33 @@ import { useOrderSheet } from './hooks/useOrderSheet';
 import { useOrderSheetPricing } from './hooks/useOrderSheetPricing';
 import NoticeIcon from '../Icons/NoticeIcon';
 import OrderSummaryRow from './components/OrderSummaryRow';
+import CheckBox from '../components/CheckBox';
 
 const OrderConfirmPage = () => {
   const { orderSheetId } = useParams();
   const navigate = useNavigate();
-  const { orderSheet, isLoading, error } = useOrderSheet(orderSheetId);
-  const { pricing } = useOrderSheetPricing(orderSheetId);
+  const { orderSheet, isLoading, error, updateShippingArea } =
+    useOrderSheet(orderSheetId);
+  const { pricing, refetch } = useOrderSheetPricing(orderSheetId);
 
   const productTypeCount = orderSheet?.items.length ?? 0;
   const productQuantity =
     orderSheet?.items.reduce((total, item) => total + item.quantity, 0) ?? 0;
+
+  const handleShippingAreaToggle = async () => {
+    if (!orderSheet) return;
+
+    try {
+      await updateShippingArea(!orderSheet.isRemoteShippingArea);
+      refetch();
+    } catch (error) {
+      alert(
+        error instanceof Error
+          ? error.message
+          : '배송 정보를 변경하지 못했습니다.',
+      );
+    }
+  };
 
   return (
     <PageLayout
@@ -41,23 +58,34 @@ const OrderConfirmPage = () => {
 
       <OrderContent isLoading={isLoading} error={error}>
         {orderSheet && (
-          <OrderItemsSection>
-            <ContentDescription>
-              총 {productTypeCount}종류의 상품 {productQuantity}개를 주문합니다.
-              <br />
-              최종 결제 금액을 확인해 주세요.
-            </ContentDescription>
+          <>
+            <OrderItemsSection>
+              <ContentDescription>
+                총 {productTypeCount}종류의 상품 {productQuantity}개를
+                주문합니다.
+                <br />
+                최종 결제 금액을 확인해 주세요.
+              </ContentDescription>
 
-            {orderSheet.items.map(({ product, quantity }) => (
-              <OrderItem
-                key={product.id}
-                name={product.name}
-                thumbnail={product.thumbnail}
-                price={product.price}
-                quantity={quantity}
+              {orderSheet.items.map(({ product, quantity }) => (
+                <OrderItem
+                  key={product.id}
+                  name={product.name}
+                  thumbnail={product.thumbnail}
+                  price={product.price}
+                  quantity={quantity}
+                />
+              ))}
+            </OrderItemsSection>
+            <ShippingSection aria-label="배송 정보">
+              <ShippingTitle>배송 정보</ShippingTitle>
+              <CheckBox
+                checked={orderSheet.isRemoteShippingArea}
+                label="제주도 및 도서 산간 지역"
+                onToggle={handleShippingAreaToggle}
               />
-            ))}
-          </OrderItemsSection>
+            </ShippingSection>
+          </>
         )}
 
         <NoticeSection>
@@ -104,11 +132,22 @@ const BackButton = styled.button`
 
 const OrderItemsSection = styled.section``;
 
+const ShippingSection = styled.section`
+  margin-top: 1.5rem;
+`;
+
+const ShippingTitle = styled.h2`
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+`;
+
 const NoticeSection = styled.div`
   display: flex;
   align-items: center;
   gap: 0.25rem;
   margin: 0.5rem 0;
+  padding-top: 1rem;
 `;
 
 const OrderSummarySection = styled.section`

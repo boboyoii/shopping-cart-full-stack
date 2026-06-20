@@ -11,6 +11,10 @@ interface CreateOrderSheetRequest {
   items: OrderSheetRequestItem[];
 }
 
+interface UpdateShippingAreaRequest {
+  isRemoteShippingArea: boolean;
+}
+
 interface OrderSheetItem {
   product: Product;
   quantity: number;
@@ -88,6 +92,30 @@ export const orderSheetHandlers = [
 
     return HttpResponse.json({ pricing: getPricing(orderSheet) });
   }),
+
+  http.patch(
+    '/api/order-sheets/:orderSheetId/shipping-area/',
+    async ({ params, request }) => {
+      const orderSheetId = params.orderSheetId as string;
+      const orderSheet = orderSheets.get(orderSheetId);
+
+      if (!orderSheet) {
+        return HttpResponse.json(
+          {
+            code: 'RESOURCE_NOT_FOUND',
+            message: '요청한 리소스를 찾을 수 없습니다.',
+          },
+          { status: 404 },
+        );
+      }
+
+      const { isRemoteShippingArea } =
+        (await request.json()) as UpdateShippingAreaRequest;
+      orderSheet.isRemoteShippingArea = isRemoteShippingArea;
+
+      return new HttpResponse(null, { status: 204 });
+    },
+  ),
 
   http.get('/api/order-sheets/:orderSheetId/', ({ params }) => {
     const orderSheetId = params.orderSheetId as string;

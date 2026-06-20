@@ -22,7 +22,7 @@ const OrderContent = ({
   }
 
   if (error) {
-    return <StatusMessage role="alert">주문 정보를 불러오지 못했습니다.</StatusMessage>;
+    return <StatusMessage role="alert">{error.message}</StatusMessage>;
   }
 
   return children;

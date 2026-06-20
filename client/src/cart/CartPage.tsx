@@ -169,6 +169,7 @@ const NoticeSection = styled.div`
   align-items: center;
   gap: 0.25rem;
   margin: 0.5rem 0;
+  padding-top: 1rem;
 `;
 
 const CartSummarySection = styled.section`

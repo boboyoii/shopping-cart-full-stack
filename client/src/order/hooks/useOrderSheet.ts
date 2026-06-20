@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { getOrderSheet, type OrderSheet } from '../../apis/orderSheet';
+import {
+  getOrderSheet,
+  type OrderSheet,
+  updateShippingArea as updateOrderSheetShippingArea,
+} from '../../apis/orderSheet';
 
 export const useOrderSheet = (orderSheetId: string | undefined) => {
   const [orderSheet, setOrderSheet] = useState<OrderSheet | null>(null);
@@ -18,7 +22,7 @@ export const useOrderSheet = (orderSheetId: string | undefined) => {
         setError(
           error instanceof Error
             ? error
-            : new Error('주문 목록을 불러오지 못했습니다.'),
+            : new Error('주문 정보를 불러오지 못했습니다.'),
         );
       } finally {
         setIsLoading(false);
@@ -28,5 +32,17 @@ export const useOrderSheet = (orderSheetId: string | undefined) => {
     fetchOrderSheet();
   }, [orderSheetId]);
 
-  return { orderSheet, isLoading, error };
+  const updateShippingArea = async (isRemoteShippingArea: boolean) => {
+    if (!orderSheetId) return false;
+
+    await updateOrderSheetShippingArea(orderSheetId, isRemoteShippingArea);
+
+    setOrderSheet((previousOrderSheet) =>
+      previousOrderSheet
+        ? { ...previousOrderSheet, isRemoteShippingArea }
+        : previousOrderSheet,
+    );
+  };
+
+  return { orderSheet, isLoading, error, updateShippingArea };
 };
