@@ -3,9 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import PageLayout from '../components/PageLayout';
 import BackIcon from '../Icons/BackIcon';
 import Button from '../components/Button';
-import Spinner from '../components/Spinner';
 import { ContentDescription, PageTitle } from '../components/Typography';
 import OrderItem from './components/OrderItem';
+import OrderContent from './components/OrderContent';
 import { useOrderSheet } from './hooks/useOrderSheet';
 
 const OrderConfirmPage = () => {
@@ -31,36 +31,30 @@ const OrderConfirmPage = () => {
     >
       <PageTitle>주문 확인</PageTitle>
 
-      {isLoading && (
-        <LoadingState role="status">
-          <Spinner aria-hidden="true" />
-        </LoadingState>
-      )}
+      <OrderContent isLoading={isLoading} error={error}>
+        {orderSheet && (
+          <>
+            <ContentDescription>
+              총 {productTypeCount}종류의 상품 {productQuantity}개를 주문합니다.
+              <br />
+              최종 결제 금액을 확인해 주세요.
+            </ContentDescription>
 
-      {error && <StatusMessage role="alert">{error.message}</StatusMessage>}
-
-      {orderSheet && !isLoading && !error && (
-        <>
-          <ContentDescription>
-            총 {productTypeCount}종류의 상품 {productQuantity}개를 주문합니다.
-            <br />
-            최종 결제 금액을 확인해 주세요.
-          </ContentDescription>
-
-          {orderSheet.items.map(({ product, quantity }) => (
-            <OrderItem
-              key={product.id}
-              name={product.name}
-              thumbnail={product.thumbnail}
-              price={product.price}
-              quantity={quantity}
-            />
-          ))}
-        </>
-      )}
+            {orderSheet.items.map(({ product, quantity }) => (
+              <OrderItem
+                key={product.id}
+                name={product.name}
+                thumbnail={product.thumbnail}
+                price={product.price}
+                quantity={quantity}
+              />
+            ))}
+          </>
+        )}
+      </OrderContent>
 
       <BottomButtonWrapper>
-        <Button fullWidth disabled={!orderSheet || isLoading || Boolean(error)}>
+        <Button fullWidth disabled={!orderSheet}>
           결제하기
         </Button>
       </BottomButtonWrapper>
@@ -84,24 +78,6 @@ const BottomButtonWrapper = styled.div`
   max-width: 26rem;
   transform: translateX(-50%);
   z-index: 100;
-`;
-
-const LoadingState = styled.div`
-  min-height: 30rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const StatusMessage = styled.p`
-  min-height: 30rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 400;
 `;
 
 export default OrderConfirmPage;
