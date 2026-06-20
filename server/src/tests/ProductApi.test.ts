@@ -7,17 +7,20 @@ import { createCartController } from '../controllers/cartController.js';
 import { createProductController } from '../controllers/productController.js';
 import { ProductType } from '../models/Product.js';
 import { createOrderSheetController } from '../controllers/orderSheetController.js';
+import { createCouponController } from '../controllers/couponController.js';
 
 describe('프로덕트 API 테스트', () => {
   const storage = new InMemoryStorage();
   const cartController = createCartController(storage);
   const productController = createProductController(storage);
   const orderSheetController = createOrderSheetController(storage);
+  const couponController = createCouponController(storage);
 
   const app = createApp({
     productController,
     cartController,
     orderSheetController,
+    couponController,
   });
   const product1 = new Product('피자', 30000, 'pizza.png');
   const product2 = new Product('치킨', 20000, 'chicken.png');

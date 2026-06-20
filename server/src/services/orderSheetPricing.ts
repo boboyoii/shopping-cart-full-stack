@@ -1,4 +1,7 @@
-import { DEFAULT_SHIPPING_FEE, FREE_SHIPPING_THRESHOLD } from '../constanst.js';
+import {
+  DEFAULT_SHIPPING_FEE,
+  FREE_SHIPPING_THRESHOLD,
+} from '../constants/policy.js';
 import OrderSheet from '../models/OrderSheet.js';
 import { CouponContext } from '../models/coupons/Coupon.js';
 

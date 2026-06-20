@@ -5,20 +5,23 @@ import request from 'supertest';
 import Cart from '../models/Cart.js';
 import { createCartController } from '../controllers/cartController.js';
 import { createProductController } from '../controllers/productController.js';
-import { USER_ID } from '../constanst.js';
+import { DEFAULT_USER_ID } from '../constants/user.js';
 import { createOrderSheetController } from '../controllers/orderSheetController.js';
+import { createCouponController } from '../controllers/couponController.js';
 
 describe('카트 API 테스트', () => {
   const storage = new InMemoryStorage();
   const productController = createProductController(storage);
   const cartController = createCartController(storage);
   const orderSheetController = createOrderSheetController(storage);
+  const couponController = createCouponController(storage);
   const app = createApp({
     productController,
     cartController,
     orderSheetController,
+    couponController,
   });
-  const cart = storage.getItemById('cart', USER_ID) as Cart;
+  const cart = storage.getItemById('cart', DEFAULT_USER_ID) as Cart;
 
   const product1 = new Product('수건', 10000, '/some_image2');
   const product2 = new Product('칫솔', 5000, '/some_image');

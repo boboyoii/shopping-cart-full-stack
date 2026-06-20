@@ -1,11 +1,12 @@
 import InMemoryStorage from './storages/InMemoryStorage.js';
 import { createApp } from './app.js';
-import { USER_ID } from './constanst.js';
+import { DEFAULT_USER_ID } from './constants/user.js';
 import { createCartController } from './controllers/cartController.js';
 import { createProductController } from './controllers/productController.js';
 import Cart from './models/Cart.js';
 import Product from './models/Product.js';
 import { createOrderSheetController } from './controllers/orderSheetController.js';
+import { createCouponController } from './controllers/couponController.js';
 import BuyNGetMCoupon from './models/coupons/BuyNGetMCoupon.js';
 import FixedAmountCoupon from './models/coupons/FixedAmountCoupon.js';
 import FreeShippingCoupon from './models/coupons/FreeShippingCoupon.js';
@@ -14,7 +15,7 @@ import RateCoupon from './models/coupons/RateCoupon.js';
 const PORT = process.env.PORT ?? 3000;
 
 const storage = new InMemoryStorage();
-const cart = storage.getItemById('cart', USER_ID) as Cart;
+const cart = storage.getItemById('cart', DEFAULT_USER_ID) as Cart;
 
 // 동작 확인을 위한 초기 데이터 추가
 const initialCartItems = [
@@ -113,10 +114,12 @@ initialCoupons.forEach((coupon) => {
 const productController = createProductController(storage);
 const cartController = createCartController(storage);
 const orderSheetController = createOrderSheetController(storage);
+const couponController = createCouponController(storage);
 const app = createApp({
   productController,
   cartController,
   orderSheetController,
+  couponController,
 });
 
 app.listen(PORT, () => {

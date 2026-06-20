@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { USER_ID } from '../constanst.js';
+import { DEFAULT_USER_ID } from '../constants/user.js';
 import { NotFoundError } from '../errors.js';
 import Cart from '../models/Cart.js';
 import { Storage } from '../storages/Storage.js';
@@ -53,7 +53,7 @@ export function createOrderSheetController(
     create: (req, res, next) => {
       try {
         const { items }: CreateOrderSheetRequest = req.body;
-        const cart = storage.getItemById<Cart>('cart', USER_ID) as Cart;
+        const cart = storage.getItemById<Cart>('cart', DEFAULT_USER_ID) as Cart;
 
         const orderItems = items.map(({ productId, quantity }) => {
           if (!cart.hasItemByProductId(productId)) {
@@ -72,7 +72,7 @@ export function createOrderSheetController(
           };
         });
 
-        const orderSheet = new OrderSheet(USER_ID, orderItems);
+        const orderSheet = new OrderSheet(DEFAULT_USER_ID, orderItems);
 
         const coupons = storage.allItems<BaseCoupon>('coupons');
         const context = createPricingContext(orderSheet);

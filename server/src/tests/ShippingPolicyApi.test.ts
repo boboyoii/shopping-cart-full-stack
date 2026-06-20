@@ -4,16 +4,19 @@ import request from 'supertest';
 import { createCartController } from '../controllers/cartController.js';
 import { createProductController } from '../controllers/productController.js';
 import { createOrderSheetController } from '../controllers/orderSheetController.js';
+import { createCouponController } from '../controllers/couponController.js';
 
 describe('배송 정책 API 테스트', () => {
   const storage = new InMemoryStorage();
   const productController = createProductController(storage);
   const cartController = createCartController(storage);
   const orderSheetController = createOrderSheetController(storage);
+  const couponController = createCouponController(storage);
   const app = createApp({
     productController,
     cartController,
     orderSheetController,
+    couponController,
   });
 
   test('배송비 정책을 반환한다.', async () => {

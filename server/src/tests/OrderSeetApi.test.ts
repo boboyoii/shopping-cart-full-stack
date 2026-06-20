@@ -5,23 +5,26 @@ import request from 'supertest';
 import Cart from '../models/Cart.js';
 import { createCartController } from '../controllers/cartController.js';
 import { createProductController } from '../controllers/productController.js';
-import { USER_ID } from '../constanst.js';
+import { DEFAULT_USER_ID } from '../constants/user.js';
 import { createOrderSheetController } from '../controllers/orderSheetController.js';
 import OrderSheet from '../models/OrderSheet.js';
 import FixedAmountCoupon from '../models/coupons/FixedAmountCoupon.js';
 import RateCoupon from '../models/coupons/RateCoupon.js';
+import { createCouponController } from '../controllers/couponController.js';
 
 describe('주문서 API 테스트', () => {
   const storage = new InMemoryStorage();
   const productController = createProductController(storage);
   const cartController = createCartController(storage);
   const orderSheetController = createOrderSheetController(storage);
+  const couponController = createCouponController(storage);
   const app = createApp({
     productController,
     cartController,
     orderSheetController,
+    couponController,
   });
-  const cart = storage.getItemById('cart', USER_ID) as Cart;
+  const cart = storage.getItemById('cart', DEFAULT_USER_ID) as Cart;
 
   const product1 = new Product('수건', 10000, '/some_image2');
   const product2 = new Product('칫솔', 5000, '/some_image');
@@ -57,7 +60,7 @@ describe('주문서 API 테스트', () => {
     expect(res.status).toBe(201);
     expect(orderSheet.toObject()).toEqual(
       expect.objectContaining({
-        userId: USER_ID,
+        userId: DEFAULT_USER_ID,
         items: [{ product: product1.toObject(), quantity: 3 }],
         selectedCouponIds: [],
         isRemoteShippingArea: false,
@@ -106,7 +109,7 @@ describe('주문서 API 테스트', () => {
   });
 
   test('주문서 ID로 주문서를 조회한다.', async () => {
-    const orderSheet = new OrderSheet(USER_ID, [
+    const orderSheet = new OrderSheet(DEFAULT_USER_ID, [
       { product: product1.toObject(), quantity: 3 },
     ]);
     storage.addItemById('orderSheets', orderSheet.getId(), orderSheet);
@@ -127,7 +130,7 @@ describe('주문서 API 테스트', () => {
   });
 
   test('주문서의 도서산간 지역 여부를 수정한다.', async () => {
-    const orderSheet = new OrderSheet(USER_ID, [
+    const orderSheet = new OrderSheet(DEFAULT_USER_ID, [
       { product: product1.toObject(), quantity: 3 },
     ]);
     storage.addItemById('orderSheets', orderSheet.getId(), orderSheet);
@@ -151,7 +154,7 @@ describe('주문서 API 테스트', () => {
   });
 
   test('주문서의 선택 쿠폰을 수정한다.', async () => {
-    const orderSheet = new OrderSheet(USER_ID, [
+    const orderSheet = new OrderSheet(DEFAULT_USER_ID, [
       { product: product1.toObject(), quantity: 3 },
     ]);
     storage.addItemById('orderSheets', orderSheet.getId(), orderSheet);
@@ -175,7 +178,7 @@ describe('주문서 API 테스트', () => {
   });
 
   test('주문서에서 사용할 수 있는 쿠폰 정보를 반환한다.', async () => {
-    const orderSheet = new OrderSheet(USER_ID, [
+    const orderSheet = new OrderSheet(DEFAULT_USER_ID, [
       { product: product1.toObject(), quantity: 10 },
     ]);
     const fixedAmountCoupon = new FixedAmountCoupon({
@@ -217,7 +220,7 @@ describe('주문서 API 테스트', () => {
   });
 
   test('선택한 쿠폰 id로 할인 금액을 미리 계산한다.', async () => {
-    const orderSheet = new OrderSheet(USER_ID, [
+    const orderSheet = new OrderSheet(DEFAULT_USER_ID, [
       { product: product1.toObject(), quantity: 3 },
     ]);
     const fixedAmountCoupon = new FixedAmountCoupon({
@@ -253,7 +256,7 @@ describe('주문서 API 테스트', () => {
   });
 
   test('주문서에 저장된 선택 쿠폰을 포함한 결제 금액을 반환한다.', async () => {
-    const orderSheet = new OrderSheet(USER_ID, [
+    const orderSheet = new OrderSheet(DEFAULT_USER_ID, [
       { product: product1.toObject(), quantity: 3 },
     ]);
     const fixedAmountCoupon = new FixedAmountCoupon({
@@ -331,7 +334,7 @@ describe('주문서 API 테스트', () => {
   });
 
   test('존재하지 않는 쿠폰으로 할인 미리보기를 요청하면 404 에러가 발생한다.', async () => {
-    const orderSheet = new OrderSheet(USER_ID, [
+    const orderSheet = new OrderSheet(DEFAULT_USER_ID, [
       { product: product1.toObject(), quantity: 3 },
     ]);
     storage.addItemById('orderSheets', orderSheet.getId(), orderSheet);

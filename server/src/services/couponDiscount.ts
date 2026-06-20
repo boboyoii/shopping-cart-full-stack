@@ -1,6 +1,5 @@
+import { MAX_COUPON_COUNT } from '../constants/policy.js';
 import BaseCoupon, { CouponContext } from '../models/coupons/Coupon.js';
-
-const MAX_COUPON_COUNT = 2;
 
 export function findAvailableCoupons(
   context: CouponContext,
