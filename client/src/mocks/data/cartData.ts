@@ -1,4 +1,4 @@
-import type { Product } from '../../cart/apis/cart';
+import type { Product } from '../../apis/cart';
 
 export const products: Product[] = [
   {
