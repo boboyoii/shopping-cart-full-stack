@@ -25,6 +25,21 @@ interface OrderSheet {
 
 const orderSheets = new Map<string, OrderSheet>();
 
+const getPricing = (orderSheet: OrderSheet) => {
+  const orderAmount = orderSheet.items.reduce(
+    (total, { product, quantity }) => total + product.price * quantity,
+    0,
+  );
+  const shippingFee = orderAmount >= 100_000 ? 0 : 3_000;
+
+  return {
+    orderAmount,
+    shippingFee,
+    discountAmount: 0,
+    totalPaymentAmount: orderAmount + shippingFee,
+  };
+};
+
 export const orderSheetHandlers = [
   http.post('/api/order-sheets/', async ({ request }) => {
     const { items } = (await request.json()) as CreateOrderSheetRequest;
@@ -55,6 +70,23 @@ export const orderSheetHandlers = [
     });
 
     return HttpResponse.json({ id }, { status: 201 });
+  }),
+
+  http.get('/api/order-sheets/:orderSheetId/pricing/', ({ params }) => {
+    const orderSheetId = params.orderSheetId as string;
+    const orderSheet = orderSheets.get(orderSheetId);
+
+    if (!orderSheet) {
+      return HttpResponse.json(
+        {
+          code: 'RESOURCE_NOT_FOUND',
+          message: '요청한 리소스를 찾을 수 없습니다.',
+        },
+        { status: 404 },
+      );
+    }
+
+    return HttpResponse.json({ pricing: getPricing(orderSheet) });
   }),
 
   http.get('/api/order-sheets/:orderSheetId/', ({ params }) => {
