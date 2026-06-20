@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import CheckBox from '../components/CheckBox';
 import NoticeIcon from '../Icons/NoticeIcon';
-import type { OrderItem } from '../order/OrderConfirmPage';
 import { useCartItems } from './hooks/useCartItems';
 import { useCartSelection } from './hooks/useCartSelection';
 import CartSummaryRow from './components/CartSummaryRow';
@@ -65,25 +64,18 @@ const CartPage = () => {
   };
 
   const handleOrderConfirm = async () => {
-    const orderItems: OrderItem[] = cartItems
+    const orderItems = cartItems
       .filter(({ product }) => selectedProductIds.includes(product.id))
       .map(({ product, quantity }) => ({
         productId: product.id,
-        name: product.name,
-        thumbnail: product.thumbnail,
-        price: product.price,
         quantity,
       }));
 
     try {
-      const { id: orderSheetId } = await createOrderSheet(
-        orderItems.map(({ productId, quantity }) => ({ productId, quantity })),
-      );
+      const { id: orderSheetId } = await createOrderSheet(orderItems);
 
-      navigate('/order-confirm', {
-        state: { orderSheetId },
-      });
-    } catch {
+      navigate(`/order-confirm/${orderSheetId}`);
+    } catch (error) {
       alert(
         error instanceof Error
           ? error.message

@@ -1,42 +1,28 @@
 import styled from '@emotion/styled';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import PageLayout from '../components/PageLayout';
 import BackIcon from '../Icons/BackIcon';
 import Button from '../components/Button';
-
-export interface OrderItem {
-  productId: string;
-  name: string;
-  thumbnail: string;
-  price: number;
-  quantity: number;
-}
-
-interface OrderConfirmState {
-  orderItems: OrderItem[];
-  shippingFee: number;
-}
+import { getOrderSheet, type OrderSheet } from '../apis/orderSheet';
 
 const OrderConfirmPage = () => {
-  const location = useLocation();
+  const { orderSheetId } = useParams();
   const navigate = useNavigate();
-  const state = location.state as OrderConfirmState | null;
+  const [orderSheet, setOrderSheet] = useState<OrderSheet | null>(null);
 
-  if (!state) {
-    return <Navigate to="/" replace />;
-  }
+  useEffect(() => {
+    if (!orderSheetId) return;
 
-  const { orderItems, shippingFee } = state;
-  const productTypeCount = orderItems.length;
+    const fetchOrderSheet = async () => {
+      const fetchedOrderSheet = await getOrderSheet(orderSheetId);
 
-  const productQuantity = orderItems.reduce(
-    (total, item) => total + item.quantity,
-    0,
-  );
+      setOrderSheet(fetchedOrderSheet);
+      console.log(fetchedOrderSheet);
+    };
 
-  const totalPaymentAmount =
-    orderItems.reduce((total, item) => total + item.price * item.quantity, 0) +
-    shippingFee;
+    void fetchOrderSheet();
+  }, [orderSheetId]);
 
   return (
     <PageLayout
@@ -50,22 +36,10 @@ const OrderConfirmPage = () => {
         </BackButton>
       }
     >
-      <Content>
-        <Title>주문 확인</Title>
-        <Description>
-          총 {productTypeCount}종류의 상품 {productQuantity}개를 주문합니다.
-          <br />
-          최종 결제 금액을 확인해 주세요.
-        </Description>
-
-        <PaymentLabel>총 결제 금액</PaymentLabel>
-        <PaymentAmount>{totalPaymentAmount.toLocaleString()}원</PaymentAmount>
-      </Content>
+      <Title>주문 확인</Title>
 
       <BottomButtonWrapper>
-        <Button fullWidth disabled={true}>
-          결제하기
-        </Button>
+        <Button fullWidth>결제하기</Button>
       </BottomButtonWrapper>
     </PageLayout>
   );
@@ -79,36 +53,8 @@ const BackButton = styled.button`
   cursor: pointer;
 `;
 
-const Content = styled.section`
-  min-height: calc(100vh - 12.5rem);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-`;
-
 const Title = styled.h2`
   margin: 0;
-  font-weight: 700;
-  font-size: 1.5rem;
-`;
-
-const Description = styled.p`
-  margin-top: 1.5rem;
-  font-weight: 700;
-  font-size: 0.75rem;
-  line-height: 1.5;
-`;
-
-const PaymentLabel = styled.strong`
-  margin-top: 1.5rem;
-  font-weight: 700;
-  font-size: 1rem;
-`;
-
-const PaymentAmount = styled.strong`
-  margin-top: 0.75rem;
   font-weight: 700;
   font-size: 1.5rem;
 `;

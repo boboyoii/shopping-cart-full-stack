@@ -1,6 +1,25 @@
+import type { Product } from './cart';
+
 export interface OrderSheetRequestItem {
   productId: string;
   quantity: number;
+}
+
+export interface OrderSheet {
+  id: string;
+  items: Array<{
+    product: Product;
+    quantity: number;
+  }>;
+  selectedCouponIds: string[];
+  isRemoteShippingArea: boolean;
+}
+
+export interface OrderSheetPricing {
+  orderAmount: number;
+  shippingFee: number;
+  discountAmount: number;
+  totalPaymentAmount: number;
 }
 
 interface CreateOrderSheetResponse {
@@ -25,4 +44,36 @@ export const createOrderSheet = async (
   }
 
   return response.json();
+};
+
+export const getOrderSheet = async (
+  orderSheetId: string,
+): Promise<OrderSheet> => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/order-sheets/${orderSheetId}/`,
+  );
+
+  if (!response.ok) {
+    throw new Error('주문 정보를 불러오지 못했습니다.');
+  }
+
+  const data = await response.json();
+
+  return data.orderSheet;
+};
+
+export const getOrderSheetPricing = async (
+  orderSheetId: string,
+): Promise<OrderSheetPricing> => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/order-sheets/${orderSheetId}/pricing/`,
+  );
+
+  if (!response.ok) {
+    throw new Error('결제 금액을 불러오지 못했습니다.');
+  }
+
+  const data = await response.json();
+
+  return data.pricing;
 };
