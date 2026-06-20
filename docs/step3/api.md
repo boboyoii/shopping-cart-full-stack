@@ -1,19 +1,66 @@
 # 장바구니 API 명세
 
-- [API 명세](https://docs.google.com/spreadsheets/d/150p3uLLBgzHVq0rRfXRyiqw5smpGWxmRLOgUMlYypsE/edit?gid=0#gid=0)
+- [API 명세 스프레드시트](https://docs.google.com/spreadsheets/d/15ukpAbl2II9rq9B_h0LgOBC9pzwLL3i4L3weXQM_dT4/edit?gid=0#gid=0)
 
-| Domain    | Method | Endpoint                                   | Description                                    | Path Params         | Query Params | Request Body                            | Status | Response Body                                                                                                                                                                                   | Response Description              | Notes                                         |
-| --------- | ------ | ------------------------------------------ | ---------------------------------------------- | ------------------- | ------------ | --------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- | --------------------------------------------- |
-| 배송비    | GET    | `/shipping-fee`                            | 기본 배송비 금액 요청하기                      | -                   | -            | -                                       | 200    | `{ shippingFee: number }`                                                                                                                                                                       |                                   |                                               |
-| 주문 정보 | POST   | `/order-sheet`                             | 주문서 생성하기                                | -                   | -            | `ts { productIds: number[] } `          | 201    | `ts { id: number } `                                                                                                                                                                            |                                   |                                               |
-| 주문 정보 | POST   | `/order-sheet`                             | 주문서 생성하기                                | -                   | -            | `ts { productIds: number[] } `          | 400    | -                                                                                                                                                                                               | 존재하지 않는 상품이 포함된 경우  |                                               |
-| 주문 정보 | GET    | `/order-sheet/:id`                         | 주문서 조회하기                                | `id`                | -            | -                                       | 200    | `ts { orderSheet: { items: [ { product: { id: number; name: string; price: number; thumbnail: string; }; quantity: number; } ], isRemoteShippingArea: boolean; selectedCoupons: string[]; } } ` |                                   |                                               |
-| 주문 정보 | GET    | `/order-sheet/:id`                         | 주문서 조회하기                                | `id`                | -            | -                                       | 404    | -                                                                                                                                                                                               | 주문서 ID가 존재하지 않는 경우    |                                               |
-| 주문 정보 | PATCH  | `/order-sheet/:id/shipping-area`           | 도서산간 정보 수정하기                         | `id (orderSheetId)` | -            | `ts { isRemoteShippingArea: boolean } ` | 204    | -                                                                                                                                                                                               |                                   |                                               |
-| 주문 정보 | GET    | `/order-sheet/:id/pricing`                 | 주문서 금액 요약 정보 조회하기                 | `id (orderSheetId)` | -            | -                                       | 200    | `ts { pricing: { orderAmount: number; couponDiscountAmount: number; shippingFee: number; } } `                                                                                                  |                                   |                                               |
-| 주문 정보 | GET    | `/order-sheet/:id/able-coupons`            | 해당 주문서에서 사용 가능한 쿠폰 코드 조회하기 | `id (orderSheetId)` | -            | -                                       | 200    | `ts { able: string[] } `                                                                                                                                                                        |                                   |                                               |
-| 주문 정보 | POST   | `/order-sheet/:id/coupon-discount-preview` | 선택된 쿠폰 적용 시 할인 금액 미리보기         | `id (orderSheetId)` | -            | `ts { selectedCoupons: string[] } `     | 201    | `ts { couponDiscountPreview: number } `                                                                                                                                                         |                                   | 서버에서 계산만 수행하며 DB에는 저장하지 않음 |
-| 주문 정보 | POST   | `/order-sheet/:id/coupon-discount-preview` | 선택된 쿠폰 적용 시 할인 금액 미리보기         | `id (orderSheetId)` | -            | `ts { selectedCoupons: string[] } `     | 400    | -                                                                                                                                                                                               | 사용할 수 없는 쿠폰이 포함된 경우 |                                               |
-| 주문 정보 | POST   | `/order-sheet/:id/coupons`                 | 선택된 쿠폰 저장하기                           | `id (orderSheetId)` | -            | `ts { selectedCoupons: string[] } `     | 204    | -                                                                                                                                                                                               |                                   |                                               |
-| 주문 정보 | POST   | `/order-sheet/:id/coupons`                 | 선택된 쿠폰 저장하기                           | `id (orderSheetId)` | -            | `ts { selectedCoupons: string[] } `     | 400    | -                                                                                                                                                                                               | 사용할 수 없는 쿠폰이 포함된 경우 |                                               |
-| 쿠폰      | GET    | `/coupons`                                 | 모든 쿠폰 정보 조회하기                        | -                   | -            | -                                       | 200    | `ts { coupons: [ { id: string; code: string; expirationDate: Date; minimumOrderAmount?: number; validityPeriod?: { startsAt: string; endsAt: string; }; } ] } `                                 |                                   |                                               |
+## 배송 정책
+
+| Method | Endpoint                | Description      | Path Params | Query Params | Request Body | Status | Response Body                                            | Response Description              | Notes |
+| ------ | ----------------------- | ---------------- | ----------- | ------------ | ------------ | ------ | -------------------------------------------------------- | --------------------------------- | ----- |
+| GET    | `/api/shipping-policy/` | 배송비 정책 조회 | -           | -            | -            | 200    | `{ "baseFee": number, "freeShippingThreshold": number }` | 기본 배송비와 무료 배송 기준 금액 |       |
+
+## 쿠폰
+
+| Method | Endpoint        | Description         | Path Params | Query Params | Request Body | Status | Response Body                                       | Response Description | Notes |
+| ------ | --------------- | ------------------- | ----------- | ------------ | ------------ | ------ | --------------------------------------------------- | -------------------- | ----- |
+| GET    | `/api/coupons/` | 전체 쿠폰 정보 조회 | -           | -            | -            | 200    | `{ "maxCouponCount": number, "coupons": Coupon[] }` |                      |       |
+
+#### Coupon
+
+```ts
+type Coupon = {
+  id: string;
+  code: 'FIXED5000' | 'BOGO' | 'FREESHIPPING' | 'MIRACLESALE';
+  name: string;
+  expiresAt: string;
+  conditions?: {
+    minimumOrderAmount?: number;
+    availableTimeRange?: {
+      startsAt: string;
+      endsAt: string;
+    };
+  };
+};
+```
+
+## 주문서
+
+| Method | Endpoint                                  | Description                    | Path Params | Query Params | Request Body                           | Status | Response Body                                                                                              | Response Description                              | Notes                                                  |
+| ------ | ----------------------------------------- | ------------------------------ | ----------- | ------------ | -------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------ |
+| POST   | `/api/order-sheets/`                      | 주문서 생성                    | -           | -            | `{ "items": OrderSheetRequestItem[] }` | 201    | `{ "id": string }`                                                                                         | 생성된 주문서 ID                                  | 생성 시 사용 가능한 쿠폰 중 최대 할인 조합을 자동 선택 |
+| GET    | `/api/order-sheets/:id/`                  | 주문서 조회                    | `id`        | -            | -                                      | 200    | `{ "orderSheet": OrderSheet }`                                                                             | 주문서 상세 정보                                  | 응답에서 `userId`는 제외                               |
+| PATCH  | `/api/order-sheets/:id/shipping-area/`    | 도서산간 지역 여부 수정        | `id`        | -            | `{ "isRemoteShippingArea": boolean }`  | 204    | -                                                                                                          | 수정 성공                                         |                                                        |
+| GET    | `/api/order-sheets/:id/coupons/`          | 주문서에 적용 가능한 쿠폰 조회 | `id`        | -            | -                                      | 200    | `{ "coupons": [{ "id": string, "code": string }] }`                                                        | 현재 주문서에서 사용 가능한 쿠폰 ID와 코드        |                                                        |
+| PATCH  | `/api/order-sheets/:id/coupons/`          | 선택 쿠폰 저장                 | `id`        | -            | `{ "selectedCouponIds": string[] }`    | 204    | -                                                                                                          | 수정 성공                                         |                                                        |
+| POST   | `/api/order-sheets/:id/discount-preview/` | 선택 쿠폰 할인 금액 미리보기   | `id`        | -            | `{ "selectedCouponIds": string[] }`    | 200    | `{ "discountAmount": number }`                                                                             | 선택한 쿠폰 조합의 할인 금액                      | 계산만 수행하며 DB에는 저장하지 않음                   |
+| GET    | `/api/order-sheets/:id/pricing/`          | 주문서 결제 금액 요약 조회     | `id`        | -            | -                                      | 200    | `{ "orderAmount": number, "shippingFee": number, "discountAmount": number, "totalPaymentAmount": number }` | 상품 금액, 배송비, 쿠폰 할인 금액, 최종 결제 금액 |                                                        |
+
+#### OrderSheet
+
+```ts
+type OrderSheet = {
+  id: string;
+  items: {
+    product: Product;
+    quantity: number;
+  }[];
+  selectedCouponIds: string[];
+  isRemoteShippingArea: boolean;
+};
+```
+
+## 공통 에러 응답
+
+| Status | Response Body                                                                        | 발생 조건                                                       |
+| ------ | ------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| 404    | `{ "code": "RESOURCE_NOT_FOUND", "message": "요청한 리소스를 찾을 수 없습니다." }`   | 존재하지 않는 상품, 장바구니 아이템, 주문서, 쿠폰을 요청한 경우 |
+| 500    | `{ "code": "INTERNAL_SERVER_ERROR", "message": "예기치 못한 오류가 발생했습니다." }` | 예상하지 못한 서버 오류가 발생한 경우                           |
