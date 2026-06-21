@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PageLayout from '../components/PageLayout';
 import BackIcon from '../Icons/BackIcon';
@@ -15,6 +16,7 @@ import { useOrderSheetPricing } from './hooks/useOrderSheetPricing';
 import NoticeIcon from '../Icons/NoticeIcon';
 import OrderSummaryRow from './components/OrderSummaryRow';
 import CheckBox from '../components/CheckBox';
+import CouponModal from './components/CouponModal';
 
 const OrderConfirmPage = () => {
   const { orderSheetId } = useParams();
@@ -22,6 +24,7 @@ const OrderConfirmPage = () => {
   const { orderSheet, isLoading, error, updateShippingArea } =
     useOrderSheet(orderSheetId);
   const { pricing, refetch } = useOrderSheetPricing(orderSheetId);
+  const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
 
   const productTypeCount = orderSheet?.items.length ?? 0;
   const productQuantity =
@@ -77,6 +80,16 @@ const OrderConfirmPage = () => {
                 />
               ))}
             </OrderItemsSection>
+
+            <CouponSection>
+              <CouponApplyButton
+                type="button"
+                onClick={() => setIsCouponModalOpen(true)}
+              >
+                쿠폰 적용
+              </CouponApplyButton>
+            </CouponSection>
+
             <ShippingSection aria-label="배송 정보">
               <ShippingTitle>배송 정보</ShippingTitle>
               <CheckBox
@@ -118,6 +131,11 @@ const OrderConfirmPage = () => {
           결제하기
         </Button>
       </BottomButtonWrapper>
+
+      <CouponModal
+        isOpen={isCouponModalOpen}
+        onClose={() => setIsCouponModalOpen(false)}
+      />
     </PageLayout>
   );
 };
@@ -132,6 +150,10 @@ const BackButton = styled.button`
 
 const OrderItemsSection = styled.section``;
 
+const CouponSection = styled.section`
+  margin-top: 1.5rem;
+`;
+
 const ShippingSection = styled.section`
   margin-top: 1.5rem;
 `;
@@ -140,6 +162,18 @@ const ShippingTitle = styled.h2`
   margin: 0 0 0.75rem;
   font-size: 1rem;
   font-weight: 700;
+`;
+
+const CouponApplyButton = styled.button`
+  width: 100%;
+  height: 3.25rem;
+  border: 1px solid #0000001a;
+  border-radius: 0.25rem;
+  background-color: #ffffff;
+  color: #777777;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
 `;
 
 const NoticeSection = styled.div`
