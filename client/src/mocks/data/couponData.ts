@@ -1,18 +1,4 @@
-interface CouponConditions {
-  minimumOrderAmount?: number;
-  availableTimeRange?: {
-    startsAt: string;
-    endsAt: string;
-  };
-}
-
-export interface Coupon {
-  id: string;
-  code: 'FIXED5000' | 'BOGO' | 'FREESHIPPING' | 'MIRACLESALE';
-  name: string;
-  expiresAt: string;
-  conditions?: CouponConditions;
-}
+import type { Coupon } from '../../apis/coupon';
 
 export const maxCouponCount = 2;
 

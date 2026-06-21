@@ -1,4 +1,5 @@
 import type { Product } from './cart';
+import { API_BASE_URL } from './config';
 
 export interface OrderSheetRequestItem {
   productId: string;
@@ -25,8 +26,6 @@ export interface OrderSheetPricing {
 interface CreateOrderSheetResponse {
   id: string;
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
 
 export const createOrderSheet = async (
   items: OrderSheetRequestItem[],
