@@ -132,10 +132,12 @@ const OrderConfirmPage = () => {
         </Button>
       </BottomButtonWrapper>
 
-      <CouponModal
-        isOpen={isCouponModalOpen}
-        onClose={() => setIsCouponModalOpen(false)}
-      />
+      {isCouponModalOpen && (
+        <CouponModal
+          initialSelectedCouponIds={orderSheet?.selectedCouponIds ?? []}
+          onClose={() => setIsCouponModalOpen(false)}
+        />
+      )}
     </PageLayout>
   );
 };
