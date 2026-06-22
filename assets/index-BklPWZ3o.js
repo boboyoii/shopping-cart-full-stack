@@ -14136,7 +14136,7 @@ var CartContent = (t0) => {
 	if (isLoading) {
 		let t1;
 		if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingState$1, {
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingState$2, {
 				role: "status",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { "aria-hidden": "true" })
 			});
@@ -14147,7 +14147,7 @@ var CartContent = (t0) => {
 	if (error) {
 		let t1;
 		if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
-			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage$1, {
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage$2, {
 				role: "alert",
 				children: "장바구니 상품을 불러오지 못했습니다."
 			});
@@ -14158,20 +14158,20 @@ var CartContent = (t0) => {
 	if (isEmpty) {
 		let t1;
 		if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
-			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage$1, { children: "장바구니에 담은 상품이 없습니다." });
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage$2, { children: "장바구니에 담은 상품이 없습니다." });
 			$[2] = t1;
 		} else t1 = $[2];
 		return t1;
 	}
 	return children;
 };
-var LoadingState$1 = styled.div`
+var LoadingState$2 = styled.div`
   min-height: 30rem;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
-var StatusMessage$1 = styled.p`
+var StatusMessage$2 = styled.p`
   min-height: 30rem;
   display: flex;
   align-items: center;
@@ -14666,7 +14666,7 @@ var OrderContent = (t0) => {
 	if (isLoading) {
 		let t1;
 		if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingState, {
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingState$1, {
 				role: "status",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { "aria-hidden": "true" })
 			});
@@ -14677,7 +14677,7 @@ var OrderContent = (t0) => {
 	if (error) {
 		let t1;
 		if ($[1] !== error.message) {
-			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage, {
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage$1, {
 				role: "alert",
 				children: error.message
 			});
@@ -14688,13 +14688,13 @@ var OrderContent = (t0) => {
 	}
 	return children;
 };
-var LoadingState = styled.div`
+var LoadingState$1 = styled.div`
   min-height: 30rem;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
-var StatusMessage = styled.p`
+var StatusMessage$1 = styled.p`
   min-height: 30rem;
   display: flex;
   align-items: center;
@@ -15087,7 +15087,10 @@ var CouponContent = (t0) => {
 	if (isLoading) {
 		let t1;
 		if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "쿠폰을 불러오는 중입니다." });
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingState, {
+				role: "status",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { "aria-hidden": "true" })
+			});
 			$[0] = t1;
 		} else t1 = $[0];
 		return t1;
@@ -15095,7 +15098,7 @@ var CouponContent = (t0) => {
 	if (error) {
 		let t1;
 		if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
-			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage, {
 				role: "alert",
 				children: "쿠폰 정보를 불러오지 못했습니다."
 			});
@@ -15105,6 +15108,22 @@ var CouponContent = (t0) => {
 	}
 	return children;
 };
+var LoadingState = styled.div`
+  min-height: 30rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+var StatusMessage = styled.p`
+  min-height: 30rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+  font-weight: 400;
+  font-size: 1rem;
+`;
 //#endregion
 //#region src/order/components/CouponItem.tsx
 var CouponItem = (t0) => {
