@@ -132,9 +132,10 @@ const OrderConfirmPage = () => {
         </Button>
       </BottomButtonWrapper>
 
-      {isCouponModalOpen && orderSheet && (
+      {isCouponModalOpen && orderSheet && pricing && (
         <CouponModal
           orderSheetId={orderSheet.id}
+          initialDiscountAmount={pricing.discountAmount}
           initialSelectedCouponIds={orderSheet.selectedCouponIds}
           onClose={() => setIsCouponModalOpen(false)}
         />

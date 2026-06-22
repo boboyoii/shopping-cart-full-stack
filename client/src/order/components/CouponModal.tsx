@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import NoticeIcon from '../../Icons/NoticeIcon';
+import { requestCouponDiscountPreview } from '../../apis/orderSheet';
+import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import { useAvailableCoupons } from '../hooks/useAvailableCoupons';
 import { useCoupons } from '../hooks/useCoupons';
@@ -9,6 +11,7 @@ import CouponItem from './CouponItem';
 
 interface CouponModalProps {
   onClose: () => void;
+  initialDiscountAmount: number;
   initialSelectedCouponIds: string[];
   orderSheetId: string;
 }
@@ -17,6 +20,7 @@ type CouponStatus = 'selected' | 'available' | 'unavailable' | 'limit-reached';
 
 const CouponModal = ({
   onClose,
+  initialDiscountAmount,
   initialSelectedCouponIds,
   orderSheetId,
 }: CouponModalProps) => {
@@ -33,6 +37,7 @@ const CouponModal = ({
   const [selectedCouponIds, setSelectedCouponIds] = useState(
     initialSelectedCouponIds,
   );
+  const [discountAmount, setDiscountAmount] = useState(initialDiscountAmount);
 
   const availableCouponIds = new Set(
     availableCouponData?.coupons.map(({ id }) => id) ?? [],
@@ -57,20 +62,27 @@ const CouponModal = ({
     return 'available';
   };
 
-  const handleCouponToggle = (couponId: string) => {
-    setSelectedCouponIds((previousCouponIds) => {
-      const status = getCouponStatus(couponId, previousCouponIds);
+  const handleCouponToggle = async (couponId: string) => {
+    const status = getCouponStatus(couponId);
 
-      if (status === 'selected') {
-        return previousCouponIds.filter((id) => id !== couponId);
-      }
+    if (status !== 'selected' && status !== 'available') return;
 
-      if (status !== 'available') {
-        return previousCouponIds;
-      }
+    const nextSelectedCouponIds =
+      status === 'selected'
+        ? selectedCouponIds.filter((id) => id !== couponId)
+        : [...selectedCouponIds, couponId];
 
-      return [...previousCouponIds, couponId];
-    });
+    try {
+      const preview = await requestCouponDiscountPreview(
+        orderSheetId,
+        nextSelectedCouponIds,
+      );
+
+      setSelectedCouponIds(nextSelectedCouponIds);
+      setDiscountAmount(preview.discountAmount);
+    } catch {
+      alert('쿠폰 할인 금액을 계산하지 못했습니다.');
+    }
   };
 
   return (
@@ -114,6 +126,12 @@ const CouponModal = ({
           )}
         </CouponContent>
       </Modal.Body>
+
+      <Modal.Footer>
+        <PreviewButton type="button" fullWidth>
+          총 {discountAmount.toLocaleString()}원 할인 쿠폰 사용하기
+        </PreviewButton>
+      </Modal.Footer>
     </Modal>
   );
 };
@@ -129,6 +147,19 @@ const CouponNotice = styled.p`
 const CouponList = styled.ul`
   margin: 0.75rem 0 0;
   padding: 0;
+`;
+
+const PreviewButton = styled(Button)`
+  width: 100%;
+  max-width: 20rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  border-radius: 0.3rem;
+  background-color: #333333;
 `;
 
 export default CouponModal;

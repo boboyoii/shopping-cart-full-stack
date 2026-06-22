@@ -31,6 +31,10 @@ export interface AvailableCouponListResponse {
   }>;
 }
 
+interface CouponDiscountPreviewResponse {
+  discountAmount: number;
+}
+
 interface CreateOrderSheetResponse {
   id: string;
 }
@@ -94,6 +98,28 @@ export const getAvailableCoupons = async (
 
   if (!response.ok) {
     throw new Error('사용 가능한 쿠폰 정보를 불러오지 못했습니다.');
+  }
+
+  return response.json();
+};
+
+export const requestCouponDiscountPreview = async (
+  orderSheetId: string,
+  selectedCouponIds: string[],
+): Promise<CouponDiscountPreviewResponse> => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/order-sheets/${orderSheetId}/discount-preview/`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ selectedCouponIds }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error('쿠폰 할인 금액을 계산하지 못했습니다.');
   }
 
   return response.json();

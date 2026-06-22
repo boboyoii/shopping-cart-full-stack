@@ -16,6 +16,10 @@ interface UpdateShippingAreaRequest {
   isRemoteShippingArea: boolean;
 }
 
+interface CouponDiscountPreviewRequest {
+  selectedCouponIds: string[];
+}
+
 interface OrderSheetItem {
   product: Product;
   quantity: number;
@@ -30,18 +34,56 @@ interface OrderSheet {
 
 const orderSheets = new Map<string, OrderSheet>();
 
+const getCouponDiscountAmount = (
+  orderSheet: OrderSheet,
+  selectedCouponIds: string[],
+  shippingFee: number,
+) => {
+  const orderAmount = orderSheet.items.reduce(
+    (total, { product, quantity }) => total + product.price * quantity,
+    0,
+  );
+  let discountAmount = 0;
+
+  if (selectedCouponIds.includes(couponIds.fixedAmount)) {
+    discountAmount += 5_000;
+  }
+
+  if (selectedCouponIds.includes(couponIds.buyOneGetOne)) {
+    discountAmount += Math.max(
+      ...orderSheet.items.map(({ product }) => product.price),
+      0,
+    );
+  }
+
+  if (selectedCouponIds.includes(couponIds.freeShipping)) {
+    discountAmount += shippingFee;
+  }
+
+  if (selectedCouponIds.includes(couponIds.miracleSale)) {
+    discountAmount += Math.floor((orderAmount - discountAmount) * 0.3);
+  }
+
+  return Math.min(discountAmount, orderAmount + shippingFee);
+};
+
 const getPricing = (orderSheet: OrderSheet) => {
   const orderAmount = orderSheet.items.reduce(
     (total, { product, quantity }) => total + product.price * quantity,
     0,
   );
   const shippingFee = orderAmount >= 100_000 ? 0 : 3_000;
+  const discountAmount = getCouponDiscountAmount(
+    orderSheet,
+    orderSheet.selectedCouponIds,
+    shippingFee,
+  );
 
   return {
     orderAmount,
     shippingFee,
-    discountAmount: 0,
-    totalPaymentAmount: orderAmount + shippingFee,
+    discountAmount,
+    totalPaymentAmount: orderAmount + shippingFee - discountAmount,
   };
 };
 
@@ -114,6 +156,35 @@ export const orderSheetHandlers = [
 
     return HttpResponse.json({ coupons: availableCoupons });
   }),
+
+  http.post(
+    '/api/order-sheets/:orderSheetId/discount-preview/',
+    async ({ params, request }) => {
+      const orderSheetId = params.orderSheetId as string;
+      const orderSheet = orderSheets.get(orderSheetId);
+
+      if (!orderSheet) {
+        return HttpResponse.json(
+          {
+            code: 'RESOURCE_NOT_FOUND',
+            message: '요청한 리소스를 찾을 수 없습니다.',
+          },
+          { status: 404 },
+        );
+      }
+
+      const { selectedCouponIds } =
+        (await request.json()) as CouponDiscountPreviewRequest;
+      const { shippingFee } = getPricing(orderSheet);
+      const discountAmount = getCouponDiscountAmount(
+        orderSheet,
+        selectedCouponIds,
+        shippingFee,
+      );
+
+      return HttpResponse.json({ discountAmount });
+    },
+  ),
 
   http.patch(
     '/api/order-sheets/:orderSheetId/shipping-area/',

@@ -129,7 +129,7 @@ const CloseButton = styled.button`
 `;
 
 const ModalBody = styled.div`
-  padding: 2rem;
+  padding: 1.5rem 2rem;
 `;
 
 const ModalFooter = styled.footer`
