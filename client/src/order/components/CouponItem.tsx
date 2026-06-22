@@ -18,7 +18,7 @@ const CouponItem = ({
   const { availableTimeRange, minimumOrderAmount } = coupon.conditions ?? {};
 
   return (
-    <Item>
+    <Item $disabled={disabled}>
       <CouponHeader>
         <CheckBox
           ariaLabel={`${coupon.name} 선택`}
@@ -73,9 +73,10 @@ const formatTimeRange = ({
   return `${startPeriod} ${formattedStartHour}시부터 ${endPeriod} ${formattedEndHour}시까지`;
 };
 
-const Item = styled.li`
+const Item = styled.li<{ $disabled: boolean }>`
   padding-block: 0.75rem 1.25rem;
   border-top: 1px solid #0000001a;
+  color: ${({ $disabled }) => ($disabled ? '#bfbfbf' : '#000000')};
   list-style: none;
 `;
 

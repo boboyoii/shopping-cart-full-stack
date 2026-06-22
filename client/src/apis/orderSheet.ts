@@ -1,4 +1,5 @@
 import type { Product } from './cart';
+import type { CouponCode } from './coupon';
 import { API_BASE_URL } from './config';
 
 export interface OrderSheetRequestItem {
@@ -21,6 +22,13 @@ export interface OrderSheetPricing {
   shippingFee: number;
   discountAmount: number;
   totalPaymentAmount: number;
+}
+
+export interface AvailableCouponListResponse {
+  coupons: Array<{
+    id: string;
+    code: CouponCode;
+  }>;
 }
 
 interface CreateOrderSheetResponse {
@@ -75,6 +83,20 @@ export const getOrderSheetPricing = async (
   const data = await response.json();
 
   return data.pricing;
+};
+
+export const getAvailableCoupons = async (
+  orderSheetId: string,
+): Promise<AvailableCouponListResponse> => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/order-sheets/${orderSheetId}/coupons/`,
+  );
+
+  if (!response.ok) {
+    throw new Error('사용 가능한 쿠폰 정보를 불러오지 못했습니다.');
+  }
+
+  return response.json();
 };
 
 export const updateShippingArea = async (

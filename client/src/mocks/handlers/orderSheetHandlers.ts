@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import type { Product } from '../../apis/cart';
 import { getCartItem, getProduct } from '../data/cartData';
+import { couponIds, coupons } from '../data/couponData';
 
 interface OrderSheetRequestItem {
   productId: string;
@@ -69,7 +70,7 @@ export const orderSheetHandlers = [
     orderSheets.set(id, {
       id,
       items: orderItems,
-      selectedCouponIds: [],
+      selectedCouponIds: [couponIds.freeShipping],
       isRemoteShippingArea: false,
     });
 
@@ -91,6 +92,27 @@ export const orderSheetHandlers = [
     }
 
     return HttpResponse.json({ pricing: getPricing(orderSheet) });
+  }),
+
+  http.get('/api/order-sheets/:orderSheetId/coupons/', ({ params }) => {
+    const orderSheetId = params.orderSheetId as string;
+    const orderSheet = orderSheets.get(orderSheetId);
+
+    if (!orderSheet) {
+      return HttpResponse.json(
+        {
+          code: 'RESOURCE_NOT_FOUND',
+          message: '요청한 리소스를 찾을 수 없습니다.',
+        },
+        { status: 404 },
+      );
+    }
+
+    const availableCoupons = coupons
+      .slice(0, 3)
+      .map(({ id, code }) => ({ id, code }));
+
+    return HttpResponse.json({ coupons: availableCoupons });
   }),
 
   http.patch(

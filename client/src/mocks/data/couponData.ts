@@ -2,9 +2,16 @@ import type { Coupon } from '../../apis/coupon';
 
 export const maxCouponCount = 2;
 
+export const couponIds = {
+  fixedAmount: 'coupon-fixed-5000',
+  buyOneGetOne: 'coupon-bogo',
+  freeShipping: 'coupon-free-shipping',
+  miracleSale: 'coupon-miracle-sale',
+} as const;
+
 export const coupons: Coupon[] = [
   {
-    id: 'coupon-fixed-5000',
+    id: couponIds.fixedAmount,
     code: 'FIXED5000',
     name: '5,000원 할인 쿠폰',
     expiresAt: '2026-11-30T00:00:00.000Z',
@@ -13,13 +20,13 @@ export const coupons: Coupon[] = [
     },
   },
   {
-    id: 'coupon-bogo',
+    id: couponIds.buyOneGetOne,
     code: 'BOGO',
     name: '2+1 쿠폰',
     expiresAt: '2026-06-30T00:00:00.000Z',
   },
   {
-    id: 'coupon-free-shipping',
+    id: couponIds.freeShipping,
     code: 'FREESHIPPING',
     name: '무료 배송 쿠폰',
     expiresAt: '2026-08-31T00:00:00.000Z',
@@ -28,7 +35,7 @@ export const coupons: Coupon[] = [
     },
   },
   {
-    id: 'coupon-miracle-sale',
+    id: couponIds.miracleSale,
     code: 'MIRACLESALE',
     name: '30% 시간제 할인 쿠폰',
     expiresAt: '2026-07-31T00:00:00.000Z',
