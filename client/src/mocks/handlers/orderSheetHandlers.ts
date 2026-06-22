@@ -20,6 +20,10 @@ interface CouponDiscountPreviewRequest {
   selectedCouponIds: string[];
 }
 
+interface UpdateCouponsRequest {
+  selectedCouponIds: string[];
+}
+
 interface OrderSheetItem {
   product: Product;
   quantity: number;
@@ -156,6 +160,30 @@ export const orderSheetHandlers = [
 
     return HttpResponse.json({ coupons: availableCoupons });
   }),
+
+  http.patch(
+    '/api/order-sheets/:orderSheetId/coupons/',
+    async ({ params, request }) => {
+      const orderSheetId = params.orderSheetId as string;
+      const orderSheet = orderSheets.get(orderSheetId);
+
+      if (!orderSheet) {
+        return HttpResponse.json(
+          {
+            code: 'RESOURCE_NOT_FOUND',
+            message: '요청한 리소스를 찾을 수 없습니다.',
+          },
+          { status: 404 },
+        );
+      }
+
+      const { selectedCouponIds } =
+        (await request.json()) as UpdateCouponsRequest;
+      orderSheet.selectedCouponIds = selectedCouponIds;
+
+      return new HttpResponse(null, { status: 204 });
+    },
+  ),
 
   http.post(
     '/api/order-sheets/:orderSheetId/discount-preview/',

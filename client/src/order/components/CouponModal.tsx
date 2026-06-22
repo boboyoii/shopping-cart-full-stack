@@ -10,6 +10,7 @@ import CouponContent from './CouponContent';
 import CouponItem from './CouponItem';
 
 interface CouponModalProps {
+  onApply: (selectedCouponIds: string[]) => void;
   onClose: () => void;
   initialDiscountAmount: number;
   initialSelectedCouponIds: string[];
@@ -19,6 +20,7 @@ interface CouponModalProps {
 type CouponStatus = 'selected' | 'available' | 'unavailable' | 'limit-reached';
 
 const CouponModal = ({
+  onApply,
   onClose,
   initialDiscountAmount,
   initialSelectedCouponIds,
@@ -128,7 +130,11 @@ const CouponModal = ({
       </Modal.Body>
 
       <Modal.Footer>
-        <PreviewButton type="button" fullWidth>
+        <PreviewButton
+          type="button"
+          fullWidth
+          onClick={() => onApply(selectedCouponIds)}
+        >
           총 {discountAmount.toLocaleString()}원 할인 쿠폰 사용하기
         </PreviewButton>
       </Modal.Footer>

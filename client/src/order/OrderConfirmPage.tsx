@@ -21,9 +21,9 @@ import CouponModal from './components/CouponModal';
 const OrderConfirmPage = () => {
   const { orderSheetId } = useParams();
   const navigate = useNavigate();
-  const { orderSheet, isLoading, error, updateShippingArea } =
+  const { orderSheet, isLoading, error, updateShippingArea, updateCoupons } =
     useOrderSheet(orderSheetId);
-  const { pricing, refetch } = useOrderSheetPricing(orderSheetId);
+  const { pricing, refetchPricing } = useOrderSheetPricing(orderSheetId);
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
 
   const productTypeCount = orderSheet?.items.length ?? 0;
@@ -35,12 +35,26 @@ const OrderConfirmPage = () => {
 
     try {
       await updateShippingArea(!orderSheet.isRemoteShippingArea);
-      refetch();
+      refetchPricing();
     } catch (error) {
       alert(
         error instanceof Error
           ? error.message
           : '배송 정보를 변경하지 못했습니다.',
+      );
+    }
+  };
+
+  const handleCouponApply = async (selectedCouponIds: string[]) => {
+    try {
+      await updateCoupons(selectedCouponIds);
+      refetchPricing();
+      setIsCouponModalOpen(false);
+    } catch (error) {
+      alert(
+        error instanceof Error
+          ? error.message
+          : '쿠폰을 적용하지 못했습니다.',
       );
     }
   };
@@ -137,6 +151,7 @@ const OrderConfirmPage = () => {
           orderSheetId={orderSheet.id}
           initialDiscountAmount={pricing.discountAmount}
           initialSelectedCouponIds={orderSheet.selectedCouponIds}
+          onApply={handleCouponApply}
           onClose={() => setIsCouponModalOpen(false)}
         />
       )}

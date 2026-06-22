@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   getOrderSheet,
   type OrderSheet,
+  updateOrderSheetCoupons,
   updateShippingArea as updateOrderSheetShippingArea,
 } from '../../apis/orderSheet';
 
@@ -44,5 +45,17 @@ export const useOrderSheet = (orderSheetId: string | undefined) => {
     );
   };
 
-  return { orderSheet, isLoading, error, updateShippingArea };
+  const updateCoupons = async (selectedCouponIds: string[]) => {
+    if (!orderSheetId) return false;
+
+    await updateOrderSheetCoupons(orderSheetId, selectedCouponIds);
+
+    setOrderSheet((previousOrderSheet) =>
+      previousOrderSheet
+        ? { ...previousOrderSheet, selectedCouponIds }
+        : previousOrderSheet,
+    );
+  };
+
+  return { orderSheet, isLoading, error, updateShippingArea, updateCoupons };
 };

@@ -125,6 +125,26 @@ export const requestCouponDiscountPreview = async (
   return response.json();
 };
 
+export const updateOrderSheetCoupons = async (
+  orderSheetId: string,
+  selectedCouponIds: string[],
+): Promise<void> => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/order-sheets/${orderSheetId}/coupons/`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ selectedCouponIds }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error('쿠폰을 적용하지 못했습니다.');
+  }
+};
+
 export const updateShippingArea = async (
   orderSheetId: string,
   isRemoteShippingArea: boolean,

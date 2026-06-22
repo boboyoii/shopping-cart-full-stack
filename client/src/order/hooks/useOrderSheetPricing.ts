@@ -32,11 +32,11 @@ export const useOrderSheetPricing = (orderSheetId: string | undefined) => {
     fetchOrderSheetPricing();
   }, [orderSheetId, fetchVersion]);
 
-  const refetch = () => {
+  const refetchPricing = () => {
     setIsLoading(true);
     setError(null);
     setFetchVersion((version) => version + 1);
   };
 
-  return { pricing, isLoading, error, refetch };
+  return { pricing, isLoading, error, refetchPricing };
 };
