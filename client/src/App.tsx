@@ -12,7 +12,10 @@ function App() {
           path="/order-confirm/:orderSheetId"
           element={<OrderConfirmPage />}
         />
-        <Route path="/payment-amount" element={<PaymentAmountPage />} />
+        <Route
+          path="/payment/:orderSheetId"
+          element={<PaymentAmountPage />}
+        />
       </Routes>
     </BrowserRouter>
   );

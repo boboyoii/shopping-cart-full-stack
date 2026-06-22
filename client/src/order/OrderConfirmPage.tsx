@@ -59,6 +59,18 @@ const OrderConfirmPage = () => {
     }
   };
 
+  const handlePayment = () => {
+    if (!orderSheet || !pricing) return;
+
+    navigate(`/payment/${orderSheet.id}`, {
+      state: {
+        productTypeCount,
+        productQuantity,
+        totalPaymentAmount: pricing.totalPaymentAmount,
+      },
+    });
+  };
+
   return (
     <PageLayout
       headerContent={
@@ -141,7 +153,11 @@ const OrderConfirmPage = () => {
       </OrderContent>
 
       <BottomButtonWrapper>
-        <Button fullWidth disabled={!orderSheet || !pricing}>
+        <Button
+          fullWidth
+          disabled={!orderSheet || !pricing}
+          onClick={handlePayment}
+        >
           결제하기
         </Button>
       </BottomButtonWrapper>

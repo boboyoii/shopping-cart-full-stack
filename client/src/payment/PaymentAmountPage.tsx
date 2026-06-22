@@ -1,41 +1,30 @@
 import styled from '@emotion/styled';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 import PageLayout from '../components/PageLayout';
 import Button from '../components/Button';
 
-export interface OrderItem {
-  productId: string;
-  name: string;
-  thumbnail: string;
-  price: number;
-  quantity: number;
-}
-
-interface OrderConfirmState {
-  orderItems: OrderItem[];
-  shippingFee: number;
+interface PaymentState {
+  productTypeCount: number;
+  productQuantity: number;
+  totalPaymentAmount: number;
 }
 
 const PaymentAmountPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const state = location.state as OrderConfirmState | null;
+  const { orderSheetId } = useParams();
+  const state = location.state as PaymentState | null;
 
-  if (!state) {
+  if (!orderSheetId || !state) {
     return <Navigate to="/" replace />;
   }
 
-  const { orderItems, shippingFee } = state;
-  const productTypeCount = orderItems.length;
-
-  const productQuantity = orderItems.reduce(
-    (total, item) => total + item.quantity,
-    0,
-  );
-
-  const totalPaymentAmount =
-    orderItems.reduce((total, item) => total + item.price * item.quantity, 0) +
-    shippingFee;
+  const { productTypeCount, productQuantity, totalPaymentAmount } = state;
 
   return (
     <PageLayout>
