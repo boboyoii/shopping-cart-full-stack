@@ -76,7 +76,10 @@ const getPricing = (orderSheet: OrderSheet) => {
     (total, { product, quantity }) => total + product.price * quantity,
     0,
   );
-  const shippingFee = orderAmount >= 100_000 ? 0 : 3_000;
+  const shippingFee =
+    orderAmount >= 100_000
+      ? 0
+      : 3_000 + (orderSheet.isRemoteShippingArea ? 3_000 : 0);
   const discountAmount = getCouponDiscountAmount(
     orderSheet,
     orderSheet.selectedCouponIds,

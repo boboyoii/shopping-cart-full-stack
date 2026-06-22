@@ -151,6 +151,12 @@ describe('주문서 API 테스트', () => {
         isRemoteShippingArea: true,
       }),
     );
+
+    const pricingResponse = await request(app).get(
+      `/api/order-sheets/${orderSheet.getId()}/pricing/`,
+    );
+
+    expect(pricingResponse.body.pricing.shippingFee).toBe(6000);
   });
 
   test('주문서의 선택 쿠폰을 수정한다.', async () => {
