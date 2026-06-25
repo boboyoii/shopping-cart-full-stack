@@ -14,21 +14,35 @@ import OrderContent from './components/OrderContent';
 import { useOrderSheet } from './hooks/useOrderSheet';
 import { useOrderSheetPricing } from './hooks/useOrderSheetPricing';
 import NoticeIcon from '../Icons/NoticeIcon';
-import OrderSummaryRow from './components/OrderSummaryRow';
 import CheckBox from '../components/CheckBox';
 import CouponModal from './components/CouponModal';
+import OrderSummaryContent from './components/OrderSummaryContent';
+import OrderSummaryRow from './components/OrderSummaryRow';
 
 const OrderConfirmPage = () => {
   const { orderSheetId } = useParams();
   const navigate = useNavigate();
-  const { orderSheet, isLoading, error, updateShippingArea, updateCoupons } =
-    useOrderSheet(orderSheetId);
-  const { pricing, refetchPricing } = useOrderSheetPricing(orderSheetId);
+  const {
+    orderSheet,
+    isLoading: isOrderSheetLoading,
+    error: orderSheetError,
+    updateShippingArea,
+    updateCoupons,
+  } = useOrderSheet(orderSheetId);
+  const {
+    pricing,
+    isLoading: isPricingLoading,
+    error: pricingError,
+    refetchPricing,
+  } = useOrderSheetPricing(orderSheetId);
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
 
   const productTypeCount = orderSheet?.items.length ?? 0;
   const productQuantity =
     orderSheet?.items.reduce((total, item) => total + item.quantity, 0) ?? 0;
+  const isInitialLoading =
+    (isOrderSheetLoading || isPricingLoading) && (!orderSheet || !pricing);
+  const initialError = orderSheetError ?? (!pricing ? pricingError : null);
 
   const handleShippingAreaToggle = async () => {
     if (!orderSheet) return;
@@ -52,9 +66,7 @@ const OrderConfirmPage = () => {
       setIsCouponModalOpen(false);
     } catch (error) {
       alert(
-        error instanceof Error
-          ? error.message
-          : '쿠폰을 적용하지 못했습니다.',
+        error instanceof Error ? error.message : '쿠폰을 적용하지 못했습니다.',
       );
     }
   };
@@ -85,7 +97,7 @@ const OrderConfirmPage = () => {
     >
       <PageTitle>주문 확인</PageTitle>
 
-      <OrderContent isLoading={isLoading} error={error}>
+      <OrderContent isLoading={isInitialLoading} error={initialError}>
         {orderSheet && (
           <>
             <OrderItemsSection>
@@ -132,30 +144,34 @@ const OrderConfirmPage = () => {
           <Notice>총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.</Notice>
         </NoticeSection>
 
-        {pricing && (
-          <OrderSummarySection aria-label="결제 금액 요약">
-            <OrderSummaryRow label="주문 금액" amount={pricing.orderAmount} />
-            <OrderSummaryRow
-              label="쿠폰 할인 금액"
-              amount={pricing.discountAmount}
-              prefix="-"
-            />
-            <OrderSummaryRow label="배송비" amount={pricing.shippingFee} />
+        <OrderSummaryContent isLoading={isPricingLoading} error={pricingError}>
+          {pricing && (
+            <OrderSummarySection aria-label="결제 금액 요약">
+              <OrderSummaryRow label="주문 금액" amount={pricing.orderAmount} />
+              <OrderSummaryRow
+                label="쿠폰 할인 금액"
+                amount={pricing.discountAmount}
+                prefix="-"
+              />
+              <OrderSummaryRow label="배송비" amount={pricing.shippingFee} />
 
-            <SummaryDivider />
+              <SummaryDivider />
 
-            <OrderSummaryRow
-              label="총 결제 금액"
-              amount={pricing.totalPaymentAmount}
-            />
-          </OrderSummarySection>
-        )}
+              <OrderSummaryRow
+                label="총 결제 금액"
+                amount={pricing.totalPaymentAmount}
+              />
+            </OrderSummarySection>
+          )}
+        </OrderSummaryContent>
       </OrderContent>
 
       <BottomButtonWrapper>
         <Button
           fullWidth
-          disabled={!orderSheet || !pricing}
+          disabled={
+            !orderSheet || !pricing || isPricingLoading || !!pricingError
+          }
           onClick={handlePayment}
         >
           결제하기
