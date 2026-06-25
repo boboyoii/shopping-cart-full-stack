@@ -9,10 +9,10 @@ import {
   Notice,
   PageTitle,
 } from '../components/Typography';
+import { useOrderSheet } from '../hooks/useOrderSheet';
+import { useOrderSheetPricing } from '../hooks/useOrderSheetPricing';
 import OrderItem from './components/OrderItem';
 import OrderContent from './components/OrderContent';
-import { useOrderSheet } from './hooks/useOrderSheet';
-import { useOrderSheetPricing } from './hooks/useOrderSheetPricing';
 import NoticeIcon from '../Icons/NoticeIcon';
 import CheckBox from '../components/CheckBox';
 import CouponModal from './components/CouponModal';
@@ -74,13 +74,7 @@ const OrderConfirmPage = () => {
   const handlePayment = () => {
     if (!orderSheet || !pricing) return;
 
-    navigate(`/payment/${orderSheet.id}`, {
-      state: {
-        productTypeCount,
-        productQuantity,
-        totalPaymentAmount: pricing.totalPaymentAmount,
-      },
-    });
+    navigate(`/payment/${orderSheet.id}`);
   };
 
   return (

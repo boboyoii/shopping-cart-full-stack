@@ -1,44 +1,55 @@
 import styled from '@emotion/styled';
-import {
-  Navigate,
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import PageLayout from '../components/PageLayout';
 import Button from '../components/Button';
-
-interface PaymentState {
-  productTypeCount: number;
-  productQuantity: number;
-  totalPaymentAmount: number;
-}
+import { useOrderSheet } from '../hooks/useOrderSheet';
+import { useOrderSheetPricing } from '../hooks/useOrderSheetPricing';
+import PaymentContent from './components/PaymentContent';
 
 const PaymentAmountPage = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const { orderSheetId } = useParams();
-  const state = location.state as PaymentState | null;
+  const {
+    orderSheet,
+    isLoading: isOrderSheetLoading,
+    error: orderSheetError,
+  } = useOrderSheet(orderSheetId);
+  const {
+    pricing,
+    isLoading: isPricingLoading,
+    error: pricingError,
+  } = useOrderSheetPricing(orderSheetId);
 
-  if (!orderSheetId || !state) {
+  if (!orderSheetId) {
     return <Navigate to="/" replace />;
   }
 
-  const { productTypeCount, productQuantity, totalPaymentAmount } = state;
+  const productTypeCount = orderSheet?.items.length ?? 0;
+  const productQuantity =
+    orderSheet?.items.reduce((total, item) => total + item.quantity, 0) ?? 0;
+  const isInitialLoading =
+    (isOrderSheetLoading || isPricingLoading) && (!orderSheet || !pricing);
+  const initialError = orderSheetError ?? (!pricing ? pricingError : null);
 
   return (
     <PageLayout>
-      <Content>
-        <Title>결제 확인</Title>
-        <Description>
-          총 {productTypeCount}종류의 상품 {productQuantity}개를 주문합니다.
-          <br />
-          최종 결제 금액을 확인해 주세요.
-        </Description>
+      <PaymentContent isLoading={isInitialLoading} error={initialError}>
+        {orderSheet && pricing && (
+          <Content>
+            <Title>결제 확인</Title>
+            <Description>
+              총 {productTypeCount}종류의 상품 {productQuantity}개를 주문합니다.
+              <br />
+              최종 결제 금액을 확인해 주세요.
+            </Description>
 
-        <PaymentLabel>총 결제 금액</PaymentLabel>
-        <PaymentAmount>{totalPaymentAmount.toLocaleString()}원</PaymentAmount>
-      </Content>
+            <PaymentLabel>총 결제 금액</PaymentLabel>
+            <PaymentAmount>
+              {pricing.totalPaymentAmount.toLocaleString()}원
+            </PaymentAmount>
+          </Content>
+        )}
+      </PaymentContent>
 
       <BottomButtonWrapper>
         <Button fullWidth onClick={() => navigate('/')}>
