@@ -14136,7 +14136,7 @@ var CartContent = (t0) => {
 	if (isLoading) {
 		let t1;
 		if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingState$2, {
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingState$3, {
 				role: "status",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { "aria-hidden": "true" })
 			});
@@ -14147,7 +14147,7 @@ var CartContent = (t0) => {
 	if (error) {
 		let t1;
 		if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
-			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage$2, {
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage$3, {
 				role: "alert",
 				children: "장바구니 상품을 불러오지 못했습니다."
 			});
@@ -14158,20 +14158,20 @@ var CartContent = (t0) => {
 	if (isEmpty) {
 		let t1;
 		if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
-			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage$2, { children: "장바구니에 담은 상품이 없습니다." });
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage$3, { children: "장바구니에 담은 상품이 없습니다." });
 			$[2] = t1;
 		} else t1 = $[2];
 		return t1;
 	}
 	return children;
 };
-var LoadingState$2 = styled.div`
+var LoadingState$3 = styled.div`
   min-height: 30rem;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
-var StatusMessage$2 = styled.p`
+var StatusMessage$3 = styled.p`
   min-height: 30rem;
   display: flex;
   align-items: center;
@@ -14666,7 +14666,7 @@ var OrderContent = (t0) => {
 	if (isLoading) {
 		let t1;
 		if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingState$1, {
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingState$2, {
 				role: "status",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { "aria-hidden": "true" })
 			});
@@ -14677,7 +14677,7 @@ var OrderContent = (t0) => {
 	if (error) {
 		let t1;
 		if ($[1] !== error.message) {
-			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage$1, {
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage$2, {
 				role: "alert",
 				children: error.message
 			});
@@ -14688,13 +14688,13 @@ var OrderContent = (t0) => {
 	}
 	return children;
 };
-var LoadingState$1 = styled.div`
+var LoadingState$2 = styled.div`
   min-height: 30rem;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
-var StatusMessage$1 = styled.p`
+var StatusMessage$2 = styled.p`
   min-height: 30rem;
   display: flex;
   align-items: center;
@@ -14779,57 +14779,6 @@ var useOrderSheetPricing = (orderSheetId) => {
 		refetchPricing
 	};
 };
-//#endregion
-//#region src/order/components/OrderSummaryRow.tsx
-var OrderSummaryRow = (t0) => {
-	const $ = (0, import_compiler_runtime.c)(10);
-	const { amount, label, prefix } = t0;
-	let t1;
-	if ($[0] !== label) {
-		t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, { children: label });
-		$[0] = label;
-		$[1] = t1;
-	} else t1 = $[1];
-	let t2;
-	if ($[2] !== amount) {
-		t2 = amount.toLocaleString();
-		$[2] = amount;
-		$[3] = t2;
-	} else t2 = $[3];
-	let t3;
-	if ($[4] !== prefix || $[5] !== t2) {
-		t3 = /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Value, { children: [
-			prefix,
-			t2,
-			"원"
-		] });
-		$[4] = prefix;
-		$[5] = t2;
-		$[6] = t3;
-	} else t3 = $[6];
-	let t4;
-	if ($[7] !== t1 || $[8] !== t3) {
-		t4 = /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Row, { children: [t1, t3] });
-		$[7] = t1;
-		$[8] = t3;
-		$[9] = t4;
-	} else t4 = $[9];
-	return t4;
-};
-var Row = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 0.75rem;
-`;
-var Label = styled.span`
-  font-size: 1rem;
-  font-weight: 700;
-`;
-var Value = styled.strong`
-  font-size: 1.5rem;
-  font-weight: 700;
-`;
 //#endregion
 //#region src/Icons/CloseIcon.tsx
 var CloseIcon = () => {
@@ -15087,7 +15036,7 @@ var CouponContent = (t0) => {
 	if (isLoading) {
 		let t1;
 		if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingState, {
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingState$1, {
 				role: "status",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { "aria-hidden": "true" })
 			});
@@ -15098,7 +15047,7 @@ var CouponContent = (t0) => {
 	if (error) {
 		let t1;
 		if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
-			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage, {
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage$1, {
 				role: "alert",
 				children: "쿠폰 정보를 불러오지 못했습니다."
 			});
@@ -15108,13 +15057,13 @@ var CouponContent = (t0) => {
 	}
 	return children;
 };
-var LoadingState = styled.div`
+var LoadingState$1 = styled.div`
   min-height: 30rem;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
-var StatusMessage = styled.p`
+var StatusMessage$1 = styled.p`
   min-height: 30rem;
   display: flex;
   align-items: center;
@@ -15424,13 +15373,109 @@ function _temp$1(t0) {
 	return id;
 }
 //#endregion
+//#region src/order/components/OrderSummaryContent.tsx
+var OrderSummaryContent = (t0) => {
+	const $ = (0, import_compiler_runtime.c)(2);
+	const { children, error, isLoading } = t0;
+	if (isLoading) {
+		let t1;
+		if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingState, {
+				role: "status",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { "aria-hidden": "true" })
+			});
+			$[0] = t1;
+		} else t1 = $[0];
+		return t1;
+	}
+	if (error) {
+		let t1;
+		if ($[1] === Symbol.for("react.memo_cache_sentinel")) {
+			t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusMessage, {
+				role: "alert",
+				children: "결제 금액을 불러오지 못했습니다."
+			});
+			$[1] = t1;
+		} else t1 = $[1];
+		return t1;
+	}
+	return children;
+};
+var LoadingState = styled.div`
+  min-height: 30rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+var StatusMessage = styled.p`
+  min-height: 30rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+  font-weight: 400;
+  font-size: 1rem;
+`;
+//#endregion
+//#region src/order/components/OrderSummaryRow.tsx
+var OrderSummaryRow = (t0) => {
+	const $ = (0, import_compiler_runtime.c)(10);
+	const { amount, label, prefix } = t0;
+	let t1;
+	if ($[0] !== label) {
+		t1 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, { children: label });
+		$[0] = label;
+		$[1] = t1;
+	} else t1 = $[1];
+	let t2;
+	if ($[2] !== amount) {
+		t2 = amount.toLocaleString();
+		$[2] = amount;
+		$[3] = t2;
+	} else t2 = $[3];
+	let t3;
+	if ($[4] !== prefix || $[5] !== t2) {
+		t3 = /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Value, { children: [
+			prefix,
+			t2,
+			"원"
+		] });
+		$[4] = prefix;
+		$[5] = t2;
+		$[6] = t3;
+	} else t3 = $[6];
+	let t4;
+	if ($[7] !== t1 || $[8] !== t3) {
+		t4 = /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Row, { children: [t1, t3] });
+		$[7] = t1;
+		$[8] = t3;
+		$[9] = t4;
+	} else t4 = $[9];
+	return t4;
+};
+var Row = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+`;
+var Label = styled.span`
+  font-size: 1rem;
+  font-weight: 700;
+`;
+var Value = styled.strong`
+  font-size: 1.5rem;
+  font-weight: 700;
+`;
+//#endregion
 //#region src/order/OrderConfirmPage.tsx
 var OrderConfirmPage = () => {
-	const $ = (0, import_compiler_runtime.c)(47);
+	const $ = (0, import_compiler_runtime.c)(51);
 	const { orderSheetId } = useParams();
 	const navigate = useNavigate();
-	const { orderSheet, isLoading, error, updateShippingArea, updateCoupons } = useOrderSheet(orderSheetId);
-	const { pricing, refetchPricing } = useOrderSheetPricing(orderSheetId);
+	const { orderSheet, isLoading: isOrderSheetLoading, error: orderSheetError, updateShippingArea, updateCoupons } = useOrderSheet(orderSheetId);
+	const { pricing, isLoading: isPricingLoading, error: pricingError, refetchPricing } = useOrderSheetPricing(orderSheetId);
 	const [isCouponModalOpen, setIsCouponModalOpen] = (0, import_react.useState)(false);
 	const productTypeCount = orderSheet?.items.length ?? 0;
 	let t0;
@@ -15440,6 +15485,8 @@ var OrderConfirmPage = () => {
 		$[1] = t0;
 	} else t0 = $[1];
 	const productQuantity = t0;
+	const isInitialLoading = (isOrderSheetLoading || isPricingLoading) && (!orderSheet || !pricing);
+	const initialError = orderSheetError ?? (!pricing ? pricingError : null);
 	let t1;
 	if ($[2] !== orderSheet || $[3] !== refetchPricing || $[4] !== updateShippingArea) {
 		t1 = async () => {
@@ -15448,8 +15495,8 @@ var OrderConfirmPage = () => {
 				await updateShippingArea(!orderSheet.isRemoteShippingArea);
 				refetchPricing();
 			} catch (t2) {
-				const error_0 = t2;
-				alert(error_0 instanceof Error ? error_0.message : "배송 정보를 변경하지 못했습니다.");
+				const error = t2;
+				alert(error instanceof Error ? error.message : "배송 정보를 변경하지 못했습니다.");
 			}
 		};
 		$[2] = orderSheet;
@@ -15466,8 +15513,8 @@ var OrderConfirmPage = () => {
 				refetchPricing();
 				setIsCouponModalOpen(false);
 			} catch (t3) {
-				const error_1 = t3;
-				alert(error_1 instanceof Error ? error_1.message : "쿠폰을 적용하지 못했습니다.");
+				const error_0 = t3;
+				alert(error_0 instanceof Error ? error_0.message : "쿠폰을 적용하지 못했습니다.");
 			}
 		};
 		$[6] = refetchPricing;
@@ -15586,68 +15633,80 @@ var OrderConfirmPage = () => {
 		$[28] = t10;
 	} else t10 = $[28];
 	let t11;
-	if ($[29] !== error || $[30] !== isLoading || $[31] !== t10 || $[32] !== t8) {
-		t11 = /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(OrderContent, {
-			isLoading,
-			error,
+	if ($[29] !== isPricingLoading || $[30] !== pricingError || $[31] !== t10) {
+		t11 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(OrderSummaryContent, {
+			isLoading: isPricingLoading,
+			error: pricingError,
+			children: t10
+		});
+		$[29] = isPricingLoading;
+		$[30] = pricingError;
+		$[31] = t10;
+		$[32] = t11;
+	} else t11 = $[32];
+	let t12;
+	if ($[33] !== initialError || $[34] !== isInitialLoading || $[35] !== t11 || $[36] !== t8) {
+		t12 = /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(OrderContent, {
+			isLoading: isInitialLoading,
+			error: initialError,
 			children: [
 				t8,
 				t9,
-				t10
+				t11
 			]
 		});
-		$[29] = error;
-		$[30] = isLoading;
-		$[31] = t10;
-		$[32] = t8;
-		$[33] = t11;
-	} else t11 = $[33];
-	const t12 = !orderSheet || !pricing;
-	let t13;
-	if ($[34] !== handlePayment || $[35] !== t12) {
-		t13 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BottomButtonWrapper$1, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button$1, {
+		$[33] = initialError;
+		$[34] = isInitialLoading;
+		$[35] = t11;
+		$[36] = t8;
+		$[37] = t12;
+	} else t12 = $[37];
+	const t13 = !orderSheet || !pricing || isPricingLoading || !!pricingError;
+	let t14;
+	if ($[38] !== handlePayment || $[39] !== t13) {
+		t14 = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BottomButtonWrapper$1, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button$1, {
 			fullWidth: true,
-			disabled: t12,
+			disabled: t13,
 			onClick: handlePayment,
 			children: "결제하기"
 		}) });
-		$[34] = handlePayment;
-		$[35] = t12;
-		$[36] = t13;
-	} else t13 = $[36];
-	let t14;
-	if ($[37] !== handleCouponApply || $[38] !== isCouponModalOpen || $[39] !== orderSheet || $[40] !== pricing) {
-		t14 = isCouponModalOpen && orderSheet && pricing && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CouponModal, {
+		$[38] = handlePayment;
+		$[39] = t13;
+		$[40] = t14;
+	} else t14 = $[40];
+	let t15;
+	if ($[41] !== handleCouponApply || $[42] !== isCouponModalOpen || $[43] !== orderSheet || $[44] !== pricing) {
+		t15 = isCouponModalOpen && orderSheet && pricing && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CouponModal, {
 			orderSheetId: orderSheet.id,
 			initialDiscountAmount: pricing.discountAmount,
 			initialSelectedCouponIds: orderSheet.selectedCouponIds,
 			onApply: handleCouponApply,
 			onClose: () => setIsCouponModalOpen(false)
 		});
-		$[37] = handleCouponApply;
-		$[38] = isCouponModalOpen;
-		$[39] = orderSheet;
-		$[40] = pricing;
-		$[41] = t14;
-	} else t14 = $[41];
-	let t15;
-	if ($[42] !== t11 || $[43] !== t13 || $[44] !== t14 || $[45] !== t6) {
-		t15 = /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(PageLayout, {
+		$[41] = handleCouponApply;
+		$[42] = isCouponModalOpen;
+		$[43] = orderSheet;
+		$[44] = pricing;
+		$[45] = t15;
+	} else t15 = $[45];
+	let t16;
+	if ($[46] !== t12 || $[47] !== t14 || $[48] !== t15 || $[49] !== t6) {
+		t16 = /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(PageLayout, {
 			headerContent: t6,
 			children: [
 				t7,
-				t11,
-				t13,
-				t14
+				t12,
+				t14,
+				t15
 			]
 		});
-		$[42] = t11;
-		$[43] = t13;
-		$[44] = t14;
-		$[45] = t6;
-		$[46] = t15;
-	} else t15 = $[46];
-	return t15;
+		$[46] = t12;
+		$[47] = t14;
+		$[48] = t15;
+		$[49] = t6;
+		$[50] = t16;
+	} else t16 = $[50];
+	return t16;
 };
 var BackButton = styled.button`
   padding: 0;
