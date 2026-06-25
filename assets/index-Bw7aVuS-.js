@@ -15402,13 +15402,13 @@ var OrderSummaryContent = (t0) => {
 	return children;
 };
 var LoadingState = styled.div`
-  min-height: 30rem;
+  min-height: 11.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 var StatusMessage = styled.p`
-  min-height: 30rem;
+  min-height: 11.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
