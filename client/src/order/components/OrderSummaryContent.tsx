@@ -33,14 +33,14 @@ const OrderSummaryContent = ({
 };
 
 const LoadingState = styled.div`
-  min-height: 30rem;
+  min-height: 11.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
 const StatusMessage = styled.p`
-  min-height: 30rem;
+  min-height: 11.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
